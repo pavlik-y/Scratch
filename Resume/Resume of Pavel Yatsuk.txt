@@ -1,0 +1,122 @@
+
+Pavel Yatsuk | pavlik_y@mail.ru | 425-223-9069 | 23610 NE 27 St, Sammamish, WA 98074
+
+=====================================================================================
+Summary:
+Software engineer with experience in building large scale distributed storage and 
+computation systems.
+Background in networking, storage, distributed scheduling algorithms, distributed 
+consensus, performance and resource use optimizations.
+
+I’m looking for a developer position that requires building scalable distributed 
+systems.
+
+=====================================================================================
+Skills:
+    Experience with all stages of the product cycle
+    Strong design, development, testing, and debugging skills
+    Programming languages:
+        C / C++ (14 years of experience), C#, x86 / x64 assembler
+        Jscript, awk, powershell, other scripting languages
+    Knowledge of many areas of software engineering, in particular:
+        Distributed storage and computation systems
+        Network protocols
+        Performance, stress, and scalability testing and analysis
+        Database technologies
+
+=====================================================================================
+Employment history:
+
+07/2007 – present time : Senior SDE, Bing, Microsoft corp.
+    Cosmos team is building distributed storage and execution environment for Bing.
+    
+    I was supporting and improving RSL library, Paxos protocol implementation that is 
+    used in multiple services across Bing. I implemented multiple reliability and 
+    performance improvements that allowed higher utilization of cluster resources.
+    
+    I worked in execution team where I implemented scalability improvements that 
+    allowed to significantly increase volume of data processed by single job. I also 
+    implemented throttling solution that reduced wasted cluster resources by 
+    avoiding network congestions while maintaining high system utilization.
+    
+    I worked in a team of 3 people where we designed and implemented centralized 
+    process scheduler for big cluster. This scheduler is capable of making tens of 
+    thousands of scheduling decisions per second while ensuring customer resource 
+    allocation fairness and optimizing for data locality. We filed patent application 
+    on results of this work.
+    
+    I worked on storage stack components where I improved scalability of 
+    cross-cluster data replication.
+    
+    I received 2 Gold Star awards while working in this group.
+    
+    Skills: distributed systems design/algorithms, C++, C#, high performance network 
+    applications
+
+09/2005 – 07/2007 : SDE, Forefront client security, Microsoft corp.
+    Forefront client security provides antivirus/antimalware protection for PC 
+    workstations that can be controlled over the network. 
+    
+    I worked in a team that was developing Vulnerability Assessment component, it 
+    collects information about computer's configuration from different sources and 
+    evaluates computer's vulnerability level. 
+    
+    While working on this team I designed and developed number of features including 
+    ScanJob, and manifest updates. I optimized component’s memory usage and 
+    performance.  I worked with outsourcing team on implementing object processors and 
+    checks definitions.
+    
+    Skills: C++, C#, scripting, COM, XML, WUA API, WMI.
+
+05/2001 – 09/2005 : SDET, DataWorks team (MDAC) , Microsoft corp.
+    MDAC is client stack APIs that provides access to Microsoft SQL server.
+
+    I was testing network protocol formats and different network protocols used by 
+    MDAC, protocol encryption. I designed and developed man-in-the-middle testing 
+    framework which allows to implement test scenarios that involve manipulation of 
+    the network data that is sent between server and client, network failure 
+    injection. 
+
+    Skills: C++, C#, scripting (primarily JScript), developing high performance 
+    network applications, COM, SQL, database access APIs 
+    (ODBC/OLEDB/ ADO).
+
+02/2000 - 05/2001 : Software development engineer/lead, WebSci Technologies, 
+Novosibirsk, Russia
+    WebSci  Technologies was developing suite for designing and deploying dynamic 
+    database backed web applications.
+
+    I worked on layout engine, HTML/WML generation engine in runtime server and Java 
+    based designer client.
+
+    Skills: C++ for Windows/Linux/Unix, XML (XSLT), HTML (Dynamic HTML, CSS), 
+    JavaScript, Java. 
+
+07/1997 - 02/2000 : Various positions, Novosibirsk, Russia
+
+=====================================================================================
+Hobby projects:
+Magnet board: Windows phone 7 application with Google App Engine backend
+    The goal of the project was to develop scalable client server application with 
+    close to real time updates. Also the goal was to learn Google App Engine platform 
+    and smartphone networking capabilities.
+
+Flipbook : Windows Phone 7 application
+    http://windowsphone.com/s?appid=6fd17f47-f425-e011-854c-00237de2db9e
+    Finger painting animation application. The goal of project was to learn WP7 
+    platform, GPU programming.
+
+Paxos implementation
+    The goal of the project was to understand paxos protocol better and to experiment 
+    with different variants of protocol. Application included emulation of 
+    faulty/slow network with faulty/slow nodes. 
+
+LiveJournal crawler
+    The goal of the project was to experiment with algorithms on large directed 
+    graphs. As part of this project I’ve implemented paged file storage with cache 
+    layer, atomic operations model, BTree/queue/stack collections on top of it, 
+    map/set on top of BTree, graph on top of map.
+
+=====================================================================================
+Education:
+09/93 – 07/97 : BS in Applied Mathematics, Novosibirsk State University, Russia 

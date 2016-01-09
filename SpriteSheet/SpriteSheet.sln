@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteSheet", "SpriteSheet\SpriteSheet\SpriteSheet.csproj", "{2416FE0D-E5D4-4599-85AF-4E3B241F2ACF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteSheetContent", "SpriteSheet\SpriteSheetContent\SpriteSheetContent.contentproj", "{F52C2508-7793-4321-B8A3-E8C91F88E2FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuaInterpreter", "SpriteSheet\LuaInterpreter\LuaInterpreter.csproj", "{F5094BCC-9CED-437B-A258-23E2D70F4F7E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Windows Phone = Debug|Windows Phone
+		Release|Windows Phone = Release|Windows Phone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2416FE0D-E5D4-4599-85AF-4E3B241F2ACF}.Debug|Windows Phone.ActiveCfg = Debug|Windows Phone
+		{2416FE0D-E5D4-4599-85AF-4E3B241F2ACF}.Debug|Windows Phone.Build.0 = Debug|Windows Phone
+		{2416FE0D-E5D4-4599-85AF-4E3B241F2ACF}.Debug|Windows Phone.Deploy.0 = Debug|Windows Phone
+		{2416FE0D-E5D4-4599-85AF-4E3B241F2ACF}.Release|Windows Phone.ActiveCfg = Release|Windows Phone
+		{2416FE0D-E5D4-4599-85AF-4E3B241F2ACF}.Release|Windows Phone.Build.0 = Release|Windows Phone
+		{2416FE0D-E5D4-4599-85AF-4E3B241F2ACF}.Release|Windows Phone.Deploy.0 = Release|Windows Phone
+		{F52C2508-7793-4321-B8A3-E8C91F88E2FA}.Debug|Windows Phone.ActiveCfg = Debug|Windows Phone
+		{F52C2508-7793-4321-B8A3-E8C91F88E2FA}.Release|Windows Phone.ActiveCfg = Release|Windows Phone
+		{F5094BCC-9CED-437B-A258-23E2D70F4F7E}.Debug|Windows Phone.ActiveCfg = Debug|Windows Phone
+		{F5094BCC-9CED-437B-A258-23E2D70F4F7E}.Debug|Windows Phone.Build.0 = Debug|Windows Phone
+		{F5094BCC-9CED-437B-A258-23E2D70F4F7E}.Release|Windows Phone.ActiveCfg = Release|Windows Phone
+		{F5094BCC-9CED-437B-A258-23E2D70F4F7E}.Release|Windows Phone.Build.0 = Release|Windows Phone
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

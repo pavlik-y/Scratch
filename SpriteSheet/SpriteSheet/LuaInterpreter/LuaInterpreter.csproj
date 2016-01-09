@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{F5094BCC-9CED-437B-A258-23E2D70F4F7E}</ProjectGuid>
+    <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">Windows Phone</Platform>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LuaInterpreter</RootNamespace>
+    <AssemblyName>LuaInterpreter</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
+    <XnaPlatform>Windows Phone</XnaPlatform>
+    <XnaProfile>Reach</XnaProfile>
+    <XnaCrossPlatformGroupID>8e20e889-da28-495d-8cfa-7ba44c432ac9</XnaCrossPlatformGroupID>
+    <XnaOutputType>Library</XnaOutputType>
+    <XnaRefreshLevel>1</XnaRefreshLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Windows Phone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Windows Phone\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;WINDOWS_PHONE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <XnaCompressContent>false</XnaCompressContent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Windows Phone' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Windows Phone\Release</OutputPath>
+    <DefineConstants>TRACE;WINDOWS_PHONE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <XnaCompressContent>false</XnaCompressContent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework" />
+    <Reference Include="Microsoft.Xna.Framework.Game" />
+    <Reference Include="Microsoft.Xna.Framework.Graphics" />
+    <Reference Include="Microsoft.Xna.Framework.GamerServices" />
+    <Reference Include="Microsoft.Xna.Framework.Input.Touch" />
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Net" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Chunk\Assignment.cs" />
+    <Compile Include="Chunk\BreakStmt.cs" />
+    <Compile Include="Chunk\Chunk.cs" />
+    <Compile Include="Chunk\DoStmt.cs" />
+    <Compile Include="Chunk\ExprStmt.cs" />
+    <Compile Include="Chunk\ForInStmt.cs" />
+    <Compile Include="Chunk\ForStmt.cs" />
+    <Compile Include="Chunk\Function.cs" />
+    <Compile Include="Chunk\IfStmt.cs" />
+    <Compile Include="Chunk\LocalFunc.cs" />
+    <Compile Include="Chunk\LocalVar.cs" />
+    <Compile Include="Chunk\RepeatStmt.cs" />
+    <Compile Include="Chunk\ReturnStmt.cs" />
+    <Compile Include="Chunk\Statement.cs" />
+    <Compile Include="Chunk\WhileStmt.cs" />
+    <Compile Include="Expr\Access.cs" />
+    <Compile Include="Expr\BaseExpr.cs" />
+    <Compile Include="Expr\BoolLiteral.cs" />
+    <Compile Include="Expr\Expr.cs" />
+    <Compile Include="Expr\FunctionBody.cs" />
+    <Compile Include="Expr\FunctionCall.cs" />
+    <Compile Include="Expr\FunctionValue.cs" />
+    <Compile Include="Expr\GroupExpr.cs" />
+    <Compile Include="Expr\KeyAccess.cs" />
+    <Compile Include="Expr\MethodCall.cs" />
+    <Compile Include="Expr\NameAccess.cs" />
+    <Compile Include="Expr\NilLiteral.cs" />
+    <Compile Include="Expr\NumberLiteral.cs" />
+    <Compile Include="Expr\Operation.cs" />
+    <Compile Include="Expr\OperatorExpr.cs" />
+    <Compile Include="Expr\OperTable.cs" />
+    <Compile Include="Expr\PrimaryExpr.cs" />
+    <Compile Include="Expr\StringLiteral.cs" />
+    <Compile Include="Expr\TableConstructor.cs" />
+    <Compile Include="Expr\Term.cs" />
+    <Compile Include="Expr\VariableArg.cs" />
+    <Compile Include="Expr\VarName.cs" />
+    <Compile Include="LuaValue\LuaBoolean.cs" />
+    <Compile Include="LuaValue\LuaError.cs" />
+    <Compile Include="LuaValue\LuaFunction.cs" />
+    <Compile Include="LuaValue\LuaMultiValue.cs" />
+    <Compile Include="LuaValue\LuaNil.cs" />
+    <Compile Include="LuaValue\LuaNumber.cs" />
+    <Compile Include="LuaValue\LuaString.cs" />
+    <Compile Include="LuaValue\LuaTable.cs" />
+    <Compile Include="LuaValue\LuaUserdata.cs" />
+    <Compile Include="LuaValue\LuaValue.cs" />
+    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\ParserInput.cs" />
+    <Compile Include="Parser\Syntax\Access.cs" />
+    <Compile Include="Parser\Syntax\Args.cs" />
+    <Compile Include="Parser\Syntax\Assignment.cs" />
+    <Compile Include="Parser\Syntax\BaseExpr.cs" />
+    <Compile Include="Parser\Syntax\BoolLiteral.cs" />
+    <Compile Include="Parser\Syntax\BreakStmt.cs" />
+    <Compile Include="Parser\Syntax\Chunk.cs" />
+    <Compile Include="Parser\Syntax\DoStmt.cs" />
+    <Compile Include="Parser\Syntax\ElseifBlock.cs" />
+    <Compile Include="Parser\Syntax\Expr.cs" />
+    <Compile Include="Parser\Syntax\ExprStmt.cs" />
+    <Compile Include="Parser\Syntax\Field.cs" />
+    <Compile Include="Parser\Syntax\ForInStmt.cs" />
+    <Compile Include="Parser\Syntax\ForStmt.cs" />
+    <Compile Include="Parser\Syntax\Function.cs" />
+    <Compile Include="Parser\Syntax\FunctionBody.cs" />
+    <Compile Include="Parser\Syntax\FunctionCall.cs" />
+    <Compile Include="Parser\Syntax\FunctionName.cs" />
+    <Compile Include="Parser\Syntax\FunctionValue.cs" />
+    <Compile Include="Parser\Syntax\GroupExpr.cs" />
+    <Compile Include="Parser\Syntax\IfStmt.cs" />
+    <Compile Include="Parser\Syntax\ItemValue.cs" />
+    <Compile Include="Parser\Syntax\KeyAccess.cs" />
+    <Compile Include="Parser\Syntax\KeyValue.cs" />
+    <Compile Include="Parser\Syntax\LocalFunc.cs" />
+    <Compile Include="Parser\Syntax\LocalVar.cs" />
+    <Compile Include="Parser\Syntax\MethodCall.cs" />
+    <Compile Include="Parser\Syntax\NameAccess.cs" />
+    <Compile Include="Parser\Syntax\NameValue.cs" />
+    <Compile Include="Parser\Syntax\NilLiteral.cs" />
+    <Compile Include="Parser\Syntax\NumberLiteral.cs" />
+    <Compile Include="Parser\Syntax\OperatorExpr.cs" />
+    <Compile Include="Parser\Syntax\ParamList.cs" />
+    <Compile Include="Parser\Syntax\PrimaryExpr.cs" />
+    <Compile Include="Parser\Syntax\RepeatStmt.cs" />
+    <Compile Include="Parser\Syntax\ReturnStmt.cs" />
+    <Compile Include="Parser\Syntax\Statement.cs" />
+    <Compile Include="Parser\Syntax\StringLiteral.cs" />
+    <Compile Include="Parser\Syntax\TableConstructor.cs" />
+    <Compile Include="Parser\Syntax\Term.cs" />
+    <Compile Include="Parser\Syntax\Var.cs" />
+    <Compile Include="Parser\Syntax\VariableArg.cs" />
+    <Compile Include="Parser\Syntax\VarName.cs" />
+    <Compile Include="Parser\Syntax\WhileStmt.cs" />
+    <Compile Include="Parser\TextInput.cs" />
+    <Compile Include="Parser\TextParserCommon.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tuple.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
+  <!--
+      To modify your build process, add your task inside one of the targets below and uncomment it. 
+      Other similar extension points exist, see Microsoft.Common.targets.
+      <Target Name="BeforeBuild">
+      </Target>
+      <Target Name="AfterBuild">
+      </Target>
+    -->
+</Project>
