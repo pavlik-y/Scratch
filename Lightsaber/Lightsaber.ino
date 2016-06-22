@@ -5,6 +5,7 @@
 #include <Adafruit_NeoPixel.h>
 
 #include "blinker.h"
+#include "command_handler.h"
 #include "command_parser.h"
 #include "component_driver.h"
 
@@ -17,11 +18,12 @@ Adafruit_NeoPixel strip(21, LED_PIN, NEO_RGB + NEO_KHZ800);
 Adafruit_LSM9DS0 sensor;
 Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
 
+Blinker blinker(&strip);
 
 ComponentDriver component_driver;
-CommandParser command_parser(&ble, nullptr);
+CommandHandler command_handler(&component_driver, &blinker);
+CommandParser command_parser(&ble, &command_handler);
 
-Blinker blinker(&strip);
 
 void halt(int delay_ms) {
   while(true) {
@@ -59,5 +61,4 @@ void setup() {
 void loop() {
   command_parser.Tick();
   component_driver.Tick();
-//  effect_controller.Tick();
 }

@@ -10,7 +10,7 @@ class ComponentDriver;
 class Blinker : public Component {
  public:
   Blinker(Adafruit_NeoPixel* strip);
-  void Register(ComponentDriver* component_driver);
+  
   void Start() override;
   void Stop() override;
   void Tick() override;
