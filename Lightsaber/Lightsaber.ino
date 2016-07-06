@@ -3,6 +3,8 @@
 #include <Adafruit_BluefruitLE_SPI.h>
 #include <Adafruit_LSM9DS0.h>
 #include <Adafruit_NeoPixel.h>
+//#include <RTClib.h>
+//#include <SD.h>
 
 #include "blinker.h"
 #include "command_handler.h"
@@ -17,6 +19,12 @@
 Adafruit_NeoPixel strip(21, LED_PIN, NEO_RGB + NEO_KHZ800);
 Adafruit_LSM9DS0 sensor;
 Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
+
+//Sd2Card card;
+//SdVolume volume;
+//SdFile root;
+
+//RTC_PCF8523 rtc;
 
 Blinker blinker(&strip);
 
@@ -38,13 +46,18 @@ void setup() {
   strip.begin();
   strip.show();
 
-  while (!Serial);  // required for Flora & Micro
+//  while (!Serial);  // required for Flora & Micro
   Serial.begin(9600);
   Serial.println(F("-----------------------------------------"));
 
-//  if (!sensor.begin()) {
-//    Serial.println(F("sensor init failed"));
-//    halt(1000);
+  if (!sensor.begin()) {
+    Serial.println(F("sensor init failed"));
+    halt(1000);
+  }
+
+//  if (!rtc.begin()) {
+//    Serial.println(F("rtc init failed"));
+//    halt(3000);
 //  }
   
   if (!ble.begin(false)) {
