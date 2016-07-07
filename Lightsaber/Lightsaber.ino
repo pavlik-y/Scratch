@@ -10,6 +10,7 @@
 #include "command_handler.h"
 #include "command_parser.h"
 #include "component_driver.h"
+#include "shock_flash.h"
 
 #define LED_PIN 6
 #define BLUEFRUIT_SPI_CS 8
@@ -27,6 +28,7 @@ Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_
 //RTC_PCF8523 rtc;
 
 Blinker blinker(&strip);
+ShockFlash shock_flash;
 
 ComponentDriver component_driver;
 CommandHandler command_handler(&component_driver, &blinker);
