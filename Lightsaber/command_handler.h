@@ -3,14 +3,17 @@
 
 class Component;
 class ComponentDriver;
+class Prefs;
 
 class CommandHandler {
  public:
-  CommandHandler(ComponentDriver* component_driver, Component* blinker);
-  virtual ~CommandHandler();
-  virtual void HandleButton(int button, bool state);
+  CommandHandler(ComponentDriver* component_driver, Prefs* prefs, Component* blinker);
+  void HandleButton(int button, bool state);
+  void HandleColor(uint8_t r, uint8_t g, uint8_t b);
+  
  private:
   ComponentDriver* component_driver_;
+  Prefs* prefs_;
   Component* blinker_;
 };
 

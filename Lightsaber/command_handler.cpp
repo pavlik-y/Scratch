@@ -4,13 +4,13 @@
 
 #include "component.h"
 #include "component_driver.h"
+#include "prefs.h"
 
-CommandHandler::CommandHandler(ComponentDriver* component_driver, Component* blinker)
+CommandHandler::CommandHandler(ComponentDriver* component_driver, Prefs* prefs, Component* blinker)
     : component_driver_(component_driver),
+      prefs_(prefs),
       blinker_(blinker) {  
 }
-
-CommandHandler::~CommandHandler() { }
 
 void CommandHandler::HandleButton(int button, bool state) {
   if (button == 3 && state) {
@@ -24,3 +24,9 @@ void CommandHandler::HandleButton(int button, bool state) {
     return;
   }
 }
+
+void CommandHandler::HandleColor(uint8_t r, uint8_t g, uint8_t b) {
+  Serial.println(F("Handle color"));
+  prefs_->SetColor(r, g, b);
+}
+

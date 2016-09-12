@@ -8,7 +8,6 @@ class CommandParser {
  public:
   CommandParser(Adafruit_BLE* ble, CommandHandler* command_handler);
 
-  void Init();
   void Tick();
 
  private:

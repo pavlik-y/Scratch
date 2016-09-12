@@ -10,6 +10,7 @@
 #include "command_handler.h"
 #include "command_parser.h"
 #include "component_driver.h"
+#include "prefs.h"
 #include "shock_flash.h"
 
 #define LED_PIN 6
@@ -27,11 +28,13 @@ Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_
 
 //RTC_PCF8523 rtc;
 
+Prefs prefs;
+
 Blinker blinker(&strip);
-ShockFlash shock_flash;
+ShockFlash shock_flash(&strip, &sensor, &prefs);
 
 ComponentDriver component_driver;
-CommandHandler command_handler(&component_driver, &blinker);
+CommandHandler command_handler(&component_driver, &prefs, &blinker);
 CommandParser command_parser(&ble, &command_handler);
 
 
@@ -66,11 +69,10 @@ void setup() {
     Serial.println(F("BLE init failed"));
     halt(2000);
   }
-  ble.info();
+
   ble.setMode(BLUEFRUIT_MODE_DATA);
 
-  command_parser.Init();
-  blinker.Register(&component_driver);
+  shock_flash.Register(&component_driver);
 }
 
 void loop() {

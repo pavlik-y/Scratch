@@ -13,10 +13,6 @@ CommandParser::CommandParser(Adafruit_BLE* ble, CommandHandler* command_handler)
       last_check_time_(millis()) {
 }
 
-void CommandParser::Init() {
-  Serial.println(F("Init"));
-}
-
 void CommandParser::Tick() {
   unsigned long now = millis();
   if (now - last_check_time_ < CHECK_INTERVAL)
@@ -43,8 +39,11 @@ bool CommandParser::HandleBlueFruitCommand() {
   buffer[idx++] = ble_->read();
   int command_len = 0;
   switch (buffer[1]) {
-    case 'B':
+    case 'B': // Controller button
       command_len = 5;
+      break;
+    case 'C': // Color picker
+      command_len = 6;
       break;
     default:
       return false;
@@ -54,6 +53,9 @@ bool CommandParser::HandleBlueFruitCommand() {
   switch (buffer[1]) {
     case 'B':
       command_handler_->HandleButton(buffer[2] - '0', buffer[3] - '0');
+      return true;
+    case 'C':
+      command_handler_->HandleColor(buffer[2], buffer[3], buffer[4]);
       return true;
   }
   return false;
