@@ -26,5 +26,8 @@ class ShockFlash : public Component {
   unsigned long last_sample_time_;
   bool sequence_running_;
   unsigned long sequence_start_time_;
+  uint8_t color_r_;
+  uint8_t color_g_;
+  uint8_t color_b_;
 };
 #endif  // SHOCK_FLASH_H_

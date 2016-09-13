@@ -62,7 +62,7 @@ bool CommandParser::HandleBlueFruitCommand() {
 }
 
 bool CommandParser::HandleLightsaberCommand() {
-  // Al commands start with '#'
+  // All commands start with '#'
   ble_->readline();
   if (strcmp_P(ble_->buffer, PSTR("#on")) == 0) {
     // code here

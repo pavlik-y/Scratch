@@ -32,6 +32,7 @@ void ShockFlash::Tick() {
   sensor_->readGyro();
   if (abs(sensor_->gyroData.y) + abs(sensor_->gyroData.z) > 40000.0) {
     sequence_start_time_ = now;
+    prefs_->GetColor(&color_r_, &color_g_, &color_b_);
     sequence_running_ = true;
   }
   if (sequence_running_)
@@ -40,11 +41,18 @@ void ShockFlash::Tick() {
 
 void ShockFlash::UpdateStrip(unsigned long now) {
   if (now - sequence_start_time_ < 200) {
-    SetStripColor(255, 0, 0);
+    strip_->setBrightness(255);
+    SetStripColor(color_r_, color_g_, color_b_);
     return;
   }
   if (now - sequence_start_time_ < 3000) {
-    SetStripColor(0, 255, 0);
+    strip_->setBrightness(128);
+    SetStripColor(color_r_, color_g_, color_b_);
+    return;
+  }
+  if (now - sequence_start_time_ < 3500) {
+    strip_->setBrightness((128*(500 - (now - sequence_start_time_ - 3000))) / 500);
+    SetStripColor(color_r_, color_g_, color_b_);
     return;
   }
   SetStripColor(0, 0, 0);
