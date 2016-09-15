@@ -9,8 +9,6 @@ class Prefs {
 
   void SetColor(uint8_t r, uint8_t g, uint8_t b);
   void GetColor(uint8_t* r, uint8_t* g, uint8_t* b);
-
- private:
 };
 
 #endif  // PREFS_H_

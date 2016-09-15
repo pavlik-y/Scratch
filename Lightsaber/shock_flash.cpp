@@ -39,19 +39,29 @@ void ShockFlash::Tick() {
     UpdateStrip(now);
 }
 
+const int kBlinkEnd = 800;
+const int kBlinkInterval = 100;
+const int kDimmedEnd = kBlinkEnd + 2000;
+const int kFadeDuration = 500;
+const int kFadeEnd = kDimmedEnd + kFadeDuration;
+
+const int kDimLevel = 128;
+
 void ShockFlash::UpdateStrip(unsigned long now) {
-  if (now - sequence_start_time_ < 200) {
-    strip_->setBrightness(255);
+  if (now - sequence_start_time_ < kBlinkEnd) {
+    bool even_blink_interval = (((now - sequence_start_time_) / kBlinkInterval) % 2) == 0;
+    strip_->setBrightness(even_blink_interval ? 255 : 0);
     SetStripColor(color_r_, color_g_, color_b_);
     return;
   }
-  if (now - sequence_start_time_ < 3000) {
-    strip_->setBrightness(128);
+  if (now - sequence_start_time_ < kDimmedEnd) {
+    strip_->setBrightness(kDimLevel);
     SetStripColor(color_r_, color_g_, color_b_);
     return;
   }
-  if (now - sequence_start_time_ < 3500) {
-    strip_->setBrightness((128*(500 - (now - sequence_start_time_ - 3000))) / 500);
+  if (now - sequence_start_time_ < kFadeEnd) {
+    int fade_progress = kFadeEnd - (now - sequence_start_time_);
+    strip_->setBrightness((kDimLevel * fade_progress) / kFadeDuration);
     SetStripColor(color_r_, color_g_, color_b_);
     return;
   }
