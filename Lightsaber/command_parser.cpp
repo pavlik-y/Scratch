@@ -64,8 +64,8 @@ bool CommandParser::HandleBlueFruitCommand() {
 bool CommandParser::HandleLightsaberCommand() {
   // All commands start with '#'
   ble_->readline();
-  if (strcmp_P(ble_->buffer, PSTR("#on")) == 0) {
-    // code here
+  if (strncmp_P(ble_->buffer, PSTR("#time="), 6) == 0) {
+    // Code to set clock goes here
     return true;
   }
   return false;

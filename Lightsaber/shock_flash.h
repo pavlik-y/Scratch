@@ -12,8 +12,7 @@ class Prefs;
 class ShockFlash : public Component {
  public:
   ShockFlash(Adafruit_NeoPixel* strip, Adafruit_LSM9DS0* sensor, Prefs* prefs);
-  void Register(ComponentDriver* component_driver) override;
-  void Start() override;
+
   void Tick() override;
   
  private:

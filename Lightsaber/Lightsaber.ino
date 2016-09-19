@@ -3,13 +3,14 @@
 #include <Adafruit_BluefruitLE_SPI.h>
 #include <Adafruit_LSM9DS0.h>
 #include <Adafruit_NeoPixel.h>
-//#include <RTClib.h>
+#include <RTClib.h>
 //#include <SD.h>
 
 #include "blinker.h"
 #include "command_handler.h"
 #include "command_parser.h"
 #include "component_driver.h"
+#include "digital_clock.h"
 #include "prefs.h"
 #include "shock_flash.h"
 
@@ -21,16 +22,17 @@
 Adafruit_NeoPixel strip(21, LED_PIN, NEO_RGB + NEO_KHZ800);
 Adafruit_LSM9DS0 sensor;
 Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
+RTC_PCF8523 rtc;
 
 //Sd2Card card;
 //SdVolume volume;
 //SdFile root;
 
-//RTC_PCF8523 rtc;
 
 Prefs prefs;
 
 Blinker blinker(&strip);
+DigitalClock digital_clock(&strip, &rtc);
 ShockFlash shock_flash(&strip, &sensor, &prefs);
 
 ComponentDriver component_driver;
@@ -73,6 +75,7 @@ void setup() {
   ble.setMode(BLUEFRUIT_MODE_DATA);
 
   shock_flash.Register(&component_driver);
+//  digital_clock.Register(&component_driver);
 }
 
 void loop() {
