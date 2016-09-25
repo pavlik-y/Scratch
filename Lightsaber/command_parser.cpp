@@ -65,7 +65,7 @@ bool CommandParser::HandleLightsaberCommand() {
   // All commands start with '#'
   ble_->readline();
   if (strncmp_P(ble_->buffer, PSTR("#time="), 6) == 0) {
-    // Code to set clock goes here
+    command_handler_->HandleSetTime(ble_->buffer + 6);
     return true;
   }
   return false;

@@ -9,6 +9,12 @@ DigitalClock::DigitalClock(Adafruit_NeoPixel* strip, RTC_PCF8523* rtc)
 const int kMinuteOffset = 8;
 const int kHourOffset = 15;
 
+void DigitalClock::Stop() {
+  strip_->clear();
+  strip_->setBrightness(255);
+  strip_->show();
+}
+
 void DigitalClock::Tick() {
   DateTime now = rtc_->now();
   if (last_seconds_time_ == now.secondstime())

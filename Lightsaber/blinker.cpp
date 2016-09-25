@@ -2,7 +2,7 @@
 
 #include "component_driver.h"
 
-#define UPDATE_INTERVAL 50
+#define UPDATE_INTERVAL 20
 
 Blinker::Blinker(Adafruit_NeoPixel* strip)
     : strip_(strip),
@@ -19,6 +19,7 @@ void Blinker::Start() {
 
 void Blinker::Stop() {
   strip_->clear();
+  strip_->setBrightness(255);
   strip_->show();
 }
 

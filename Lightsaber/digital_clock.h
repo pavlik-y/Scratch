@@ -9,7 +9,8 @@
 class DigitalClock : public Component {
  public:
   DigitalClock(Adafruit_NeoPixel* strip, RTC_PCF8523* rtc);
-  
+
+  void Stop() override;
   void Tick() override;
   
  private:

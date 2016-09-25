@@ -16,6 +16,12 @@ ShockFlash::ShockFlash(Adafruit_NeoPixel* strip, Adafruit_LSM9DS0* sensor, Prefs
       sequence_start_time_(0) {  
 }
 
+void ShockFlash::Stop() {
+  strip_->clear();
+  strip_->setBrightness(255);
+  strip_->show();
+}
+
 void ShockFlash::Tick() {
   unsigned long now = millis();
   if (now - last_sample_time_ < kSampleInterval)

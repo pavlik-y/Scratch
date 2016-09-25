@@ -36,7 +36,7 @@ DigitalClock digital_clock(&strip, &rtc);
 ShockFlash shock_flash(&strip, &sensor, &prefs);
 
 ComponentDriver component_driver;
-CommandHandler command_handler(&component_driver, &prefs, &blinker);
+CommandHandler command_handler(&component_driver, &prefs, &rtc, &blinker, &shock_flash, &digital_clock);
 CommandParser command_parser(&ble, &command_handler);
 
 
