@@ -2,7 +2,6 @@
 
 #include "shock_flash.h"
 
-#include "component_driver.h"
 #include "prefs.h"
 
 const int kSampleInterval = 20;
@@ -14,6 +13,10 @@ ShockFlash::ShockFlash(Adafruit_NeoPixel* strip, Adafruit_LSM9DS0* sensor, Prefs
       last_sample_time_(millis()),
       sequence_running_(false),
       sequence_start_time_(0) {  
+}
+
+void ShockFlash::Start() {
+  last_sample_time_ = millis();
 }
 
 void ShockFlash::Stop() {

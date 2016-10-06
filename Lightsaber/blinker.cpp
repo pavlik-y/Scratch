@@ -1,7 +1,5 @@
 #include "blinker.h"
 
-#include "component_driver.h"
-
 #define UPDATE_INTERVAL 20
 
 Blinker::Blinker(Adafruit_NeoPixel* strip)
@@ -12,8 +10,6 @@ Blinker::Blinker(Adafruit_NeoPixel* strip)
 }
 
 void Blinker::Start() {
-  strip_->clear();
-  strip_->show();
   last_update_time_ = millis();
 }
 

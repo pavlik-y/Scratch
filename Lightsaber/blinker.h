@@ -5,8 +5,6 @@
 
 #include "component.h"
 
-class ComponentDriver;
-
 class Blinker : public Component {
  public:
   Blinker(Adafruit_NeoPixel* strip);

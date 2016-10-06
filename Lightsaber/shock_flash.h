@@ -6,13 +6,13 @@
 
 #include "component.h"
 
-class ComponentDriver;
 class Prefs;
 
 class ShockFlash : public Component {
  public:
   ShockFlash(Adafruit_NeoPixel* strip, Adafruit_LSM9DS0* sensor, Prefs* prefs);
 
+  void Start() override;
   void Stop() override;
   void Tick() override;
   

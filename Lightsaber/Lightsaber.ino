@@ -9,6 +9,7 @@
 #include "blinker.h"
 #include "command_handler.h"
 #include "command_parser.h"
+#include "compass.h"
 #include "component_driver.h"
 #include "digital_clock.h"
 #include "prefs.h"
@@ -32,6 +33,7 @@ RTC_PCF8523 rtc;
 Prefs prefs;
 
 Blinker blinker(&strip);
+Compass compass(&strip, &sensor);
 DigitalClock digital_clock(&strip, &rtc);
 ShockFlash shock_flash(&strip, &sensor, &prefs);
 
@@ -74,8 +76,9 @@ void setup() {
 
   ble.setMode(BLUEFRUIT_MODE_DATA);
 
-  shock_flash.Register(&component_driver);
+//  shock_flash.Register(&component_driver);
 //  digital_clock.Register(&component_driver);
+  compass.Register(&component_driver);
 }
 
 void loop() {
