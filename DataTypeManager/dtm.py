@@ -1,18 +1,29 @@
-class ModelAssociationManager:
+class DataTypeManager:
   def __init__(self, controllers, delegate):
-    self.controllers_ = controllers
-    self.delegate_ = delegate
+    self.controllers = controllers
+    self.delegate = delegate
+    self.state = "Ready"
+  def Configure(self, desired_types):
+    assert(self.state == "Ready")
+    self.state = "Configuring"
+    self.delegate.OnConfigureStart()
+    types_to_start, types_to_stop = self.GetTypeActions(desired_types)
 
-  def Initialize(self, type_map):
+    for type in types_to_start:
+      self.controllers[type].Start(self.InitialSyncStateCallback)
+    for type in types_to_stop:
+      self.controllers[type].Stop()
+  def InitialSyncStateCallback(self, type, initial_sync_done):
     pass
 
-class DataTypeManager:
-  def __init__(self, controllers, encryption_handler, configurer, observer):
-    self.controllers_ = controllers
-    self.encryption_handler_ = encryption_handler
-    self.configurer_ = configurer
-    self.observer_ = observer
-    self.mam_ = ModelAssociationManager(self.controllers_, self)
-
-  def Configure(self, desired_types):
-    self.mam_.Initialize(desired_types)
+  def GetTypeActions(self, desired_types):
+    types_to_start = set()
+    types_to_stop = set()
+    for type, controller in self.controllers.iteritems():
+      if type in desired_types and controller.state() == "NotRunning":
+        types_to_start.add(type)
+      elif type not in desired_types and controller.state() == "Running":
+        types_to_stop.add(type)
+      else:
+        assert(False, "type is in unexpected state")
+    return (types_to_start, types_to_stop)
