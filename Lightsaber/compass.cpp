@@ -4,7 +4,6 @@
 
 #include "compass.h"
 
-
 const long kSampleInterval = 1000;
 
 Compass::Compass(Adafruit_NeoPixel* strip, Adafruit_LSM9DS0* sensor)

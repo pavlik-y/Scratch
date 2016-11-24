@@ -12,6 +12,8 @@
 #include "compass.h"
 #include "component_driver.h"
 #include "digital_clock.h"
+#include "magic_wand.h"
+#include "motion_image.h"
 #include "prefs.h"
 #include "shock_flash.h"
 
@@ -35,6 +37,8 @@ Prefs prefs;
 Blinker blinker(&strip);
 Compass compass(&strip, &sensor);
 DigitalClock digital_clock(&strip, &rtc);
+MagicWand magic_wand(&strip, &sensor);
+MotionImage motion_image(&strip, &sensor);
 ShockFlash shock_flash(&strip, &sensor, &prefs);
 
 ComponentDriver component_driver;
@@ -78,7 +82,8 @@ void setup() {
 
 //  shock_flash.Register(&component_driver);
 //  digital_clock.Register(&component_driver);
-  compass.Register(&component_driver);
+//  compass.Register(&component_driver);
+  magic_wand.Register(&component_driver);
 }
 
 void loop() {
