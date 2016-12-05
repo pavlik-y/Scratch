@@ -5,11 +5,16 @@
 #include "prefs.h"
 
 const int kSampleInterval = 20;
+EffectSequence::Step steps[] = {
+  {1000, 100},
+  {1000, 50}
+};
 
 ShockFlash::ShockFlash(Adafruit_NeoPixel* strip, Adafruit_LSM9DS0* sensor, Prefs* prefs)
     : strip_(strip),
       sensor_(sensor),
       prefs_(prefs),
+      effect_sequence_(steps, 2), 
       last_sample_time_(millis()),
       sequence_running_(false),
       sequence_start_time_(0) {  
@@ -32,12 +37,17 @@ void ShockFlash::Tick() {
   last_sample_time_ = now;
   sensor_->readGyro();
   if (abs(sensor_->gyroData.y) + abs(sensor_->gyroData.z) > 40000.0) {
+    effect_sequence_.Start(now);
     sequence_start_time_ = now;
     prefs_->GetColor(&color_r_, &color_g_, &color_b_);
     sequence_running_ = true;
   }
   if (sequence_running_)
     UpdateStrip(now);
+  if (effect_sequence_.DisplayUpdateNeeded(now)) {
+    UpdateStrip(now);
+    effect_sequence_.DisplayUpdated(now);
+  }
 }
 
 const int kBlinkEnd = 600;

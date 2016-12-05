@@ -5,6 +5,7 @@
 #include <Adafruit_NeoPixel.h>
 
 #include "component.h"
+#include "effect_sequence.h"
 
 class Prefs;
 
@@ -23,6 +24,8 @@ class ShockFlash : public Component {
   Adafruit_NeoPixel* strip_;
   Adafruit_LSM9DS0* sensor_;
   Prefs* prefs_;
+  EffectSequence effect_sequence_;
+  
   unsigned long last_sample_time_;
   bool sequence_running_;
   unsigned long sequence_start_time_;
