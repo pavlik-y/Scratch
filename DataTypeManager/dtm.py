@@ -27,3 +27,8 @@ class DataTypeManager:
       else:
         assert(False, "type is in unexpected state")
     return (types_to_start, types_to_stop)
+
+
+class DataTypeController:
+  def Start(self):
+    pass

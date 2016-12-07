@@ -3,6 +3,7 @@ from mock import Mock
 from mock import call
 
 from dtm import DataTypeManager
+from dtm import DataTypeController
 
 class DTMTest(unittest.TestCase):
   def setUp(self):
@@ -23,6 +24,10 @@ class DTMTest(unittest.TestCase):
     self.bm_dtc.Stop.assert_called_once_with()
     initial_sync_state_callback("bm", False)
 
+class DTCTest(unittest.TestCase):
+  def test_EnableType_HappyCase(self):
+    dtc = DataTypeController()
+    dtc.Start()
 
 if __name__ == '__main__':
   unittest.main()
