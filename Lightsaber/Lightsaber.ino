@@ -6,6 +6,7 @@
 #include <RTClib.h>
 //#include <SD.h>
 
+#include "base.h"
 #include "blinker.h"
 #include "command_handler.h"
 #include "command_parser.h"
@@ -31,7 +32,6 @@ RTC_PCF8523 rtc;
 //SdVolume volume;
 //SdFile root;
 
-
 Prefs prefs;
 
 Blinker blinker(&strip);
@@ -45,16 +45,6 @@ ComponentDriver component_driver;
 CommandHandler command_handler(&component_driver, &prefs, &rtc, &blinker, &shock_flash, &digital_clock);
 CommandParser command_parser(&ble, &command_handler);
 
-
-void halt(int delay_ms) {
-  while(true) {
-    digitalWrite(13, HIGH);
-    delay(delay_ms);
-    digitalWrite(13, LOW);
-    delay(delay_ms);
-  }
-}
-
 void setup() {
   strip.begin();
   strip.show();
@@ -63,27 +53,23 @@ void setup() {
   Serial.begin(9600);
   Serial.println(F("-----------------------------------------"));
 
-  if (!sensor.begin()) {
-    Serial.println(F("sensor init failed"));
-    halt(1000);
-  }
+  if (!sensor.begin())
+    halt(F("sensor init failed"));
 
 //  if (!rtc.begin()) {
 //    Serial.println(F("rtc init failed"));
 //    halt(3000);
 //  }
   
-  if (!ble.begin(false)) {
-    Serial.println(F("BLE init failed"));
-    halt(2000);
-  }
+  if (!ble.begin(false))
+    halt(F("BLE init failed"));
 
   ble.setMode(BLUEFRUIT_MODE_DATA);
 
-//  shock_flash.Register(&component_driver);
+  shock_flash.Register(&component_driver);
 //  digital_clock.Register(&component_driver);
 //  compass.Register(&component_driver);
-  magic_wand.Register(&component_driver);
+//  magic_wand.Register(&component_driver);
 }
 
 void loop() {

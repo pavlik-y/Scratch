@@ -41,9 +41,10 @@ bool EffectSequence::GetStep(unsigned long now, size_t* step_index, unsigned lon
     halt(F("Not running"));
   *time_offset = now - start_time_;
   *step_index = 0;
-  while (step_index < steps_count_) {
-    if (*time_offset < steps_[*step_index].duration)
+  while (*step_index < steps_count_) {
+    if (*time_offset < steps_[*step_index].duration) {
       return true;
+    }
     *time_offset -= steps_[*step_index].duration;
     *step_index += 1;
   }

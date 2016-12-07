@@ -5,19 +5,20 @@
 #include "prefs.h"
 
 const int kSampleInterval = 20;
+const int kBlinkInterval = 40;
+
 EffectSequence::Step steps[] = {
-  {1000, 100},
-  {1000, 50}
+  {600, 40},
+  {2000, 2000},
+  {500, 20}
 };
 
 ShockFlash::ShockFlash(Adafruit_NeoPixel* strip, Adafruit_LSM9DS0* sensor, Prefs* prefs)
     : strip_(strip),
       sensor_(sensor),
       prefs_(prefs),
-      effect_sequence_(steps, 2), 
-      last_sample_time_(millis()),
-      sequence_running_(false),
-      sequence_start_time_(0) {  
+      effect_sequence_(steps, 3),
+      last_sample_time_(millis()) {  
 }
 
 void ShockFlash::Start() {
@@ -38,46 +39,44 @@ void ShockFlash::Tick() {
   sensor_->readGyro();
   if (abs(sensor_->gyroData.y) + abs(sensor_->gyroData.z) > 40000.0) {
     effect_sequence_.Start(now);
-    sequence_start_time_ = now;
     prefs_->GetColor(&color_r_, &color_g_, &color_b_);
-    sequence_running_ = true;
   }
-  if (sequence_running_)
-    UpdateStrip(now);
   if (effect_sequence_.DisplayUpdateNeeded(now)) {
     UpdateStrip(now);
     effect_sequence_.DisplayUpdated(now);
   }
 }
 
-const int kBlinkEnd = 600;
-const int kBlinkInterval = 40;
-const int kDimmedEnd = kBlinkEnd + 2000;
-const int kFadeDuration = 500;
-const int kFadeEnd = kDimmedEnd + kFadeDuration;
-
 const int kDimLevel = 50;
 
 void ShockFlash::UpdateStrip(unsigned long now) {
-  if (now - sequence_start_time_ < kBlinkEnd) {
-    bool even_blink_interval = (((now - sequence_start_time_) / kBlinkInterval) % 2) == 0;
-    strip_->setBrightness(even_blink_interval ? 255 : 0);
-    SetStripColor(color_r_, color_g_, color_b_);
-    return;
+  size_t step_index;
+  unsigned long time_offset;
+  effect_sequence_.GetStep(now, &step_index, &time_offset);
+  unsigned long step_duration = effect_sequence_.GetStepDuration(step_index);
+
+  switch (step_index) {
+    case 0: {
+      bool even_blink_interval = ((time_offset / kBlinkInterval) % 2) == 0;
+      strip_->setBrightness(even_blink_interval ? 255 : 0);
+      SetStripColor(color_r_, color_g_, color_b_);
+      break;
+    }
+    case 1: {
+      strip_->setBrightness(kDimLevel);
+      SetStripColor(color_r_, color_g_, color_b_);
+      break;
+    }
+    case 2: {
+      strip_->setBrightness(kDimLevel * (step_duration - time_offset) / step_duration);
+      SetStripColor(color_r_, color_g_, color_b_);
+      break;
+    }
+    default: {
+      SetStripColor(0, 0, 0);
+      break;
+    }
   }
-  if (now - sequence_start_time_ < kDimmedEnd) {
-    strip_->setBrightness(kDimLevel);
-    SetStripColor(color_r_, color_g_, color_b_);
-    return;
-  }
-  if (now - sequence_start_time_ < kFadeEnd) {
-    unsigned long fade_progress = kFadeEnd - (now - sequence_start_time_);
-    strip_->setBrightness((kDimLevel * fade_progress) / kFadeDuration);
-    SetStripColor(color_r_, color_g_, color_b_);
-    return;
-  }
-  SetStripColor(0, 0, 0);
-  sequence_running_ = false;
 }
 
 void ShockFlash::SetStripColor(uint8_t r, uint8_t g, uint8_t b) {
