@@ -1,0 +1,97 @@
+DataTypeManagerImpl::BuildDataTypeConfigStateMap:
+[types_being_configured]
+[last_requested_types]
+[unrecoverable_error]
+[data_type_error]
+[crypto_error]
+[persistence_error]
+[unready_error]
+
+error_types = [data_type_error + [unrecoverable_error] + [crypto_error] + [persistence_error]
+fatal_types = [data_type_error] + [unrecoverable_error]
+crypto_types = [crypto_error]
+unready_types = [unready_error] & [last_requested_types]
+clean_types = [persistence_error] & [types_being_configured]
+
+// ???
+enabled_types = GetEnabledTypes()
+
+if catch_up_in_progress:
+  clean_types += enabled_types
+disabled_types = (UserTypes + ControlTypes()) - enabled_types
+to_configure = enabled_types & types_being_configured
+
+for t in types:
+  unready_types => UNREADY
+  crypto_types => CRYPTO
+  fatal_types => FATAL
+  disabled_types => DISABLED
+  clean_types => CONFIGURE_CLEAN
+  to_configure => CONFIGURE_ACTIVE
+  enabled_types => CONFIGURE_INACTIVE
+
+====
+SyncBackendHostImpl::ConfigureDataTypes:
+[DISABLED]
+[FATAL]
+[CRYPTO]
+[UNREADY]
+[CONFIGURE_ACTIVE]
+[CONFIGURE_CLEAN]
+[CONFIGURE_INACTIVE]
+[initial_sync_done_types]
+
+
+  disabled_types = [DISABLED]
+  fatal_types = [FATAL]
+  crypto_types = [CRYPTO]
+  unready_types = [UNREADY]
+  active_types = [CONFIGURE_ACTIVE]
+  clean_first_types = [CONFIGURE_CLEAN]
+  inactive_types = [CONFIGURE_INACTIVE]
+
+  disabled_types += fatal_types + crypto_types + unready_types
+
+  types_to_download = registrar_->ConfigureDataTypes(
+      active_types + clean_first_types,
+      disabled_types)
+
+  types_to_download += clean_first_types
+  types_to_download -= <PROXY_TABS>
+
+  if types_to_download == {}:
+    types_to_download = {NIGORI}
+
+  current_types = registrar_->GetLastConfiguredTypes()
+
+  types_to_purge = <ALL> - current_types - inactive_types - unready_types
+
+  fatal_types &= types_to_purge
+  unapply_types = (crypto_types + clean_first_types) & types_to_purge
+
+  assert(current_types & fatal_types == 0)
+  assert(current_types & crypto_types == 0)
+  assert(current_types & types_to_download == types_to_download)
+  assert(active_types & types_to_purge == 0)
+  assert(active_types & fatal_types == 0)
+  assert(active_types & unapply_types == 0)
+  assert(active_types & inactive_types == 0)
+
+=> Purge(types_to_purge, fatal_types, unapply_types)
+=> ConfigureSyncer(types_to_download)
+=> return active_types - types_to_download
+
+======
+
+
+SBR::ConfigureDataTypes(types_to_add, types_to_remove):
+  filtered_types_to_add = types_to_add
+  if !workers[GROUP_HISTORY]:
+    filtered_types_to_add -= TYPED_URLS
+  if !workers[GROUP_PASSWORD]:
+    filtered_types_to_add -= PASSwORDS
+  newly_added_types = filtered_types_to_add - routing_info
+  routing_info += newly_added_types
+  routing_info -= types_to_remove
+  last_configured_types = routing_info
+  return newly_added_types
