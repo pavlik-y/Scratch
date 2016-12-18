@@ -15,6 +15,7 @@ disabled_types = []
 unapply_types = []
 fatal_types = []
 types_to_add = []
+ready_types = []
 for t in types:
   if t in unready_error and t in last_requested_types: // UNREADY
     disabled_types += t
@@ -35,11 +36,20 @@ for t in types:
     types_to_add += t
     if t != PROXY_TABS:
       types_to_download += t
+    types_to_purge += t
+    unapply_types += t
+    continue
   if t in enabled_types and t in types_being_configured: // CONFIGURE_ACTIVE
-    if t in initial_sync_done_types:
+    if t not in initial_sync_done_types:
       types_to_add += t
       if t != PROXY_TABS:
         types_to_download += t
+    else:
+      ready_types += t
+    continue
+  if t in enabled_types: // CONFIGURE_INACTIVE
+
+
 
 
 

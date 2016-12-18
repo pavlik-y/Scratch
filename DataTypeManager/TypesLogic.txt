@@ -64,7 +64,7 @@ SyncBackendHostImpl::ConfigureDataTypes:
 
   current_types = registrar_->GetLastConfiguredTypes()
 
-  types_to_purge = <ALL> - current_types - inactive_types - unready_types
+  types_to_purge = (<ALL> - current_types) + clean_first_types - inactive_types - unready_types
 
   fatal_types &= types_to_purge
   unapply_types = (crypto_types + clean_first_types) & types_to_purge
