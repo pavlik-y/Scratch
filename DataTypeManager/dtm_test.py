@@ -4,6 +4,7 @@ from mock import call
 
 from dtm import DataTypeManager
 from dtm import DataTypeController
+from dtm import ModelTypeSet
 
 class DTMTest(unittest.TestCase):
   def setUp(self):
@@ -28,6 +29,16 @@ class DTCTest(unittest.TestCase):
   def test_EnableType_HappyCase(self):
     dtc = DataTypeController()
     dtc.Start()
+
+class ModelTypeSetTest(unittest.TestCase):
+  def test_Slon(self):
+    mts1 = ModelTypeSet()
+    mts2 = ModelTypeSet(["bm"])
+    self.assertTrue(mts2.HasAll(mts1))
+    self.assertTrue(mts2.HasAll(['bm']))
+
+
+
 
 if __name__ == '__main__':
   unittest.main()

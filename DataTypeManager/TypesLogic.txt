@@ -7,7 +7,8 @@ DataTypeManagerImpl::BuildDataTypeConfigStateMap:
 [persistence_error]
 [unready_error]
 
-error_types = [data_type_error + [unrecoverable_error] + [crypto_error] + [persistence_error]
+error_types = [data_type_error] + [unrecoverable_error] + [crypto_error] +
+    [persistence_error]
 fatal_types = [data_type_error] + [unrecoverable_error]
 crypto_types = [crypto_error]
 unready_types = [unready_error] & [last_requested_types]
@@ -52,6 +53,7 @@ SyncBackendHostImpl::ConfigureDataTypes:
 
   disabled_types += fatal_types + crypto_types + unready_types
 
+  # Configure fiters types based on registered workers
   types_to_download = registrar_->ConfigureDataTypes(
       active_types + clean_first_types,
       disabled_types)
@@ -64,7 +66,8 @@ SyncBackendHostImpl::ConfigureDataTypes:
 
   current_types = registrar_->GetLastConfiguredTypes()
 
-  types_to_purge = (<ALL> - current_types) + clean_first_types - inactive_types - unready_types
+  types_to_purge = (<ALL> - current_types) + clean_first_types -
+      inactive_types - unready_types
 
   fatal_types &= types_to_purge
   unapply_types = (crypto_types + clean_first_types) & types_to_purge

@@ -1,0 +1,15 @@
+Events:
+- Enable type
+- Start type after browser restart
+- Disable type
+- Enable passphrase encryption
+- Detect pending key (passphrase encryption was enabled on other client)\
+- Passphrase entered (no pending keys)
+- Type encountered DATATYPE_ERROR or UNRECOVERABLE_ERROR
+
+
+
+Notes about Journaling:
+- Only applies to Bookmarks
+Type added to passive_delete_journal_types_ after call to
+DeleteJournal::GetDeleteJournals

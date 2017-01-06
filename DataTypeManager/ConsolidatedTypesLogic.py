@@ -21,6 +21,7 @@ for t in types:
     disabled_types += t
     continue
   if t in crypto_error: // CRYPTO
+    # if type should be encrypted (PSS knows) and type is enabled
     disabled_types += t
     unapply_types += t
     continue

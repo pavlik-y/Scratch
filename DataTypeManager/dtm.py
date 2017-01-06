@@ -1,3 +1,11 @@
+class ModelTypeSet:
+  def __init__(self, types=set()):
+    self.types = set(types)
+  def HasAll(self, types):
+    if isinstance(types, ModelTypeSet):
+      return types.types <= self.types
+    return set(types) <= self.types
+
 class DataTypeManager:
   def __init__(self, controllers, delegate):
     self.controllers = controllers
