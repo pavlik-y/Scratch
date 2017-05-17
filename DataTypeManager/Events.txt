@@ -9,6 +9,16 @@ Events:
 
 
 
+
+Directory datatype:
+- Enable type
+  - LoadModels
+  - Read InitialSyncEnded (returns false)
+  - Register with backend (passive routing info in SyncBackendRegistrar and
+    DirectoryUpdateHandler in ModelTypeRegistry)
+  - Pass InitialSyncEnded to DTM, request download
+  - DTM calls with DataReady
+
 Notes about Journaling:
 - Only applies to Bookmarks
 Type added to passive_delete_journal_types_ after call to
