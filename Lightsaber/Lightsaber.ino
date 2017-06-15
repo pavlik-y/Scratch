@@ -10,12 +10,12 @@
 #include "blinker.h"
 #include "command_handler.h"
 #include "command_parser.h"
-#include "compass.h"
 #include "component_driver.h"
 #include "digital_clock.h"
 #include "magic_wand.h"
 #include "motion_image.h"
 #include "prefs.h"
+#include "sensor_display.h"
 #include "shock_flash.h"
 
 #define LED_PIN 6
@@ -34,15 +34,15 @@ RTC_PCF8523 rtc;
 
 Prefs prefs;
 
-Blinker blinker(&strip);
-Compass compass(&strip, &sensor);
+Blinker blinker(&strip, &sensor);
 DigitalClock digital_clock(&strip, &rtc);
 MagicWand magic_wand(&strip, &sensor);
 MotionImage motion_image(&strip, &sensor);
+SensorDisplay sensor_display(&strip, &sensor);
 ShockFlash shock_flash(&strip, &sensor, &prefs);
 
 ComponentDriver component_driver;
-CommandHandler command_handler(&component_driver, &prefs, &rtc, &blinker, &shock_flash, &digital_clock);
+CommandHandler command_handler(&component_driver, &prefs, &rtc, &blinker, &shock_flash, &digital_clock, &sensor_display);
 CommandParser command_parser(&ble, &command_handler);
 
 void setup() {
@@ -66,9 +66,10 @@ void setup() {
 
   ble.setMode(BLUEFRUIT_MODE_DATA);
 
-  shock_flash.Register(&component_driver);
+//  shock_flash.Register(&component_driver);
 //  digital_clock.Register(&component_driver);
-//  compass.Register(&component_driver);
+  sensor_display.Register(&component_driver);
+  sensor_display.SetSensorType(SensorDisplay::GYROSCOPE);
 //  magic_wand.Register(&component_driver);
 }
 

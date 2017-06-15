@@ -2,18 +2,21 @@
 
 #include "command_handler.h"
 
+#include "blinker.h"
 #include "component.h"
 #include "component_driver.h"
 #include "prefs.h"
+#include "sensor_display.h"
 
 CommandHandler::CommandHandler(ComponentDriver* component_driver, Prefs* prefs, RTC_PCF8523* rtc, 
-    Component* blinker, Component* shock_flash, Component* digital_clock)
+    Blinker* blinker, Component* shock_flash, Component* digital_clock, SensorDisplay* sensor_display)
     : component_driver_(component_driver),
       prefs_(prefs),
       rtc_(rtc),
       blinker_(blinker),
       shock_flash_(shock_flash),
-      digital_clock_(digital_clock) {
+      digital_clock_(digital_clock),
+      sensor_display_(sensor_display) {
 }
 
 void CommandHandler::HandleButton(int button, bool state) {
@@ -31,12 +34,28 @@ void CommandHandler::HandleButton(int button, bool state) {
   }
   if (button == 3 && state) {
     component_driver_->StopAndResetComponents();
+    blinker_->SetPredefinedPattern(0);
     blinker_->Register(component_driver_);
     component_driver_->StartComponents();
     return;
   }
-  if (button == 4 && state) {
+  if (button == 6 && state) {
     component_driver_->StopAndResetComponents();
+    return;
+  }
+  if (button == 7 && state) {
+    component_driver_->StopAndResetComponents();
+    sensor_display_->Register(component_driver_);
+    sensor_display_->SetSensorType(SensorDisplay::COMPASS);
+    component_driver_->StartComponents();
+    return;
+    
+  }
+  if (button == 8 && state) {
+    component_driver_->StopAndResetComponents();
+    sensor_display_->Register(component_driver_);
+    sensor_display_->SetSensorType(SensorDisplay::ACCELEROMETER);
+    component_driver_->StartComponents();
     return;
   }
 }
