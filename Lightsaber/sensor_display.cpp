@@ -78,10 +78,16 @@ void SensorDisplay::ReadGyroscope(int* x, int* y, int* z) {
   float xf = sensor_->gyroData.x/1000.0;
   float yf = sensor_->gyroData.y/1000.0;
   float zf = sensor_->gyroData.z/1000.0;
-  Serial.print(xf);
-  Serial.print(" ");
-  Serial.print(yf);
-  Serial.print(" ");
-  Serial.print(zf);
-  Serial.println();
+  xf = constrain(xf, -10.0, 10.0);
+  yf = constrain(yf, -10.0, 10.0);
+  zf = constrain(zf, -10.0, 10.0);
+  *x = int(xf) + 10;
+  *y = int(yf) + 10;
+  *z = int(zf) + 10;
+//  Serial.print(xf);
+//  Serial.print(" ");
+//  Serial.print(yf);
+//  Serial.print(" ");
+//  Serial.print(zf);
+//  Serial.println();
 }

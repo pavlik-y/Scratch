@@ -1,41 +1,65 @@
 #include "blinker.h"
 
-#define UPDATE_INTERVAL 20
-
-Blinker::Blinker(Adafruit_NeoPixel* strip, Adafruit_LSM9DS0* sensor)
+MotionDisplay::MotionDisplay(Adafruit_NeoPixel* strip, Adafruit_LSM9DS0* sensor)
     : strip_(strip),
       sensor_(sensor),
-      last_update_time_(0),
-      sequence_idx_(0),
+      sequence_start_time_(0),
+      current_frame_(0),
       direction_(1) { 
 }
 
-void Blinker::Start() {
-  last_update_time_ = millis();
-  sequence_idx_ = 0;
+void MotionDisplay::Start() {
+  sequence_start_time_ = millis();
+  current_frame_ = 0;
   ShowPattern(0);
 }
 
-void Blinker::Stop() {
+void MotionDisplay::Stop() {
   strip_->clear();
   strip_->setBrightness(255);
   strip_->show();
 }
 
-void Blinker::Tick() {
+void MotionDisplay::Tick() {
   unsigned long now = millis();
-  if (now - last_update_time_ < interval_)
-    return;
-  last_update_time_ = now;
-  AdvanceIndex();
-  ShowPattern(sequence_idx_);  
+  sensor_->readGyro();
+  long gyro = (long)sensor_->gyroData.z;
+  if (gyro * direction_ > 5000) {
+    direction_ = -direction_;
+    if (direction_ == 1)
+      RestartSequence(now);
+  }
+  
+  int frame_to_show = (now - sequence_start_time_) * (pattern_len_ - 1) * 2 / sequence_interval_;
+  if (frame_to_show != current_frame_) {
+    current_frame_ = frame_to_show;
+    ShowFrame(current_frame_);
+  }
 }
 
-void Blinker::SetPattern(unsigned long interval, int len, const PROGMEM byte* pattern, bool wrap_around) {
-  interval_ = interval;
+void MotionDisplay::ShowFrame(int frame_idx) {
+  if (frame_idx < pattern_len_ - 1) {
+    ShowPattern(frame_idx);
+    return;
+  }
+  if (frame_idx < (pattern_len_ - 1) * 2) {
+    ShowPattern(2 * (pattern_len_ - 1) - frame_idx);
+    return;
+  }
+  strip_->clear();
+  strip_->show();
+}
+
+void MotionDisplay::RestartSequence(unsigned long now) {
+  sequence_interval_ = now - sequence_start_time_;
+  sequence_start_time_ = now;
+  Serial.print(sequence_interval_);
+  Serial.println();
+}
+
+void MotionDisplay::SetPattern(int len, const PROGMEM byte* pattern) {
   pattern_len_ = len;
   pattern_ = pattern;
-  wrap_around_ = wrap_around;  
 }
 
 const PROGMEM byte rgb_pattern[] = {
@@ -76,26 +100,16 @@ const PROGMEM byte slon_pattern[] = {
   0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-void Blinker::SetPredefinedPattern(int index) {
+void MotionDisplay::SetPredefinedPattern(int index) {
   if (index == 0) {
-    SetPattern(15, 25, slon_pattern, false);
+    SetPattern(25, slon_pattern);
   }
 }
 
-void Blinker::AdvanceIndex() {
-  if (wrap_around_) {
-    sequence_idx_ = (sequence_idx_ + 1) % pattern_len_;
-    return;
-  }
-  if (sequence_idx_ == 0) {
-    direction_ = 1;
-  } else if (sequence_idx_ == pattern_len_ - 1) {
-    direction_ = -1;
-  }
-  sequence_idx_ += direction_;
+void MotionDisplay::AdvanceIndex() {
 }
 
-void Blinker::ShowPattern(int idx) {
+void MotionDisplay::ShowPattern(int idx) {
   PROGMEM byte* frame_ptr = pattern_ + 11*idx;
   byte two_pixels;
   for (int pixel_idx = 0; pixel_idx < 21; pixel_idx++) {
