@@ -4,7 +4,7 @@
 
 #include "sensor_display.h"
 
-const long kSampleInterval = 70;
+const long kSampleInterval = 30;
 
 SensorDisplay::SensorDisplay(Adafruit_NeoPixel* strip, Adafruit_LSM9DS0* sensor)
     : strip_(strip),
@@ -75,9 +75,9 @@ void SensorDisplay::ReadAccelerometer(int* x, int* y, int* z) {
 
 void SensorDisplay::ReadGyroscope(int* x, int* y, int* z) {
   sensor_->readGyro();
-  float xf = sensor_->gyroData.x/1000.0;
-  float yf = sensor_->gyroData.y/1000.0;
-  float zf = sensor_->gyroData.z/1000.0;
+  float xf = sensor_->gyroData.x/3000.0;
+  float yf = sensor_->gyroData.y/3000.0;
+  float zf = sensor_->gyroData.z/3000.0;
   xf = constrain(xf, -10.0, 10.0);
   yf = constrain(yf, -10.0, 10.0);
   zf = constrain(zf, -10.0, 10.0);

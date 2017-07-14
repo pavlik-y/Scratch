@@ -18,7 +18,7 @@ ShockFlash::ShockFlash(Adafruit_NeoPixel* strip, Adafruit_LSM9DS0* sensor, Prefs
       sensor_(sensor),
       prefs_(prefs),
       effect_sequence_(steps, 3),
-      last_sample_time_(millis()) {  
+      last_sample_time_(millis()) {
 }
 
 void ShockFlash::Start() {
@@ -47,7 +47,7 @@ void ShockFlash::Tick() {
   }
 }
 
-const int kDimLevel = 50;
+const int kDimLevel = 100;
 
 void ShockFlash::UpdateStrip(unsigned long now) {
   size_t step_index;

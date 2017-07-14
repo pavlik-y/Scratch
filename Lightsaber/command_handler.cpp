@@ -4,18 +4,20 @@
 
 #include "component.h"
 #include "component_driver.h"
-#include "static_picture_display.h"
+#include "blinker.h"
 #include "prefs.h"
 #include "sensor_display.h"
-#include "time_display.h"
+#include "time_bar_display.h"
 
 CommandHandler::CommandHandler(ComponentDriver* component_driver, Prefs* prefs,
     RTC_PCF8523* rtc,
-    StaticPictureDisplay* blinker,
+    Component* blinker,
     Component* shock_flash,
     Component* digital_clock,
     SensorDisplay* sensor_display,
-    TimeDisplay* time_display)
+    Component* time_bar_display,
+    Component* flashlight,
+    Component* rainbow)
     : component_driver_(component_driver),
       prefs_(prefs),
       rtc_(rtc),
@@ -23,7 +25,9 @@ CommandHandler::CommandHandler(ComponentDriver* component_driver, Prefs* prefs,
       shock_flash_(shock_flash),
       digital_clock_(digital_clock),
       sensor_display_(sensor_display),
-      time_display_(time_display),
+      time_bar_display_(time_bar_display),
+      flashlight_(flashlight),
+      rainbow_(rainbow),
       mode_(MODE_OFF) {
 }
 
@@ -73,7 +77,12 @@ void CommandHandler::SwitchToMode(Mode mode, int sub_mode) {
     case MODE_OFF:
       break;
     case MODE_FLASHLIGHT:
-      shock_flash_->Register(component_driver_);
+      if (sub_mode == 1)
+        flashlight_->Register(component_driver_);
+      else if (sub_mode == 2)
+        rainbow_->Register(component_driver_);
+      else
+        shock_flash_->Register(component_driver_);
       break;
     case MODE_SENSORS:
       if (sub_mode == 4) {
@@ -89,11 +98,10 @@ void CommandHandler::SwitchToMode(Mode mode, int sub_mode) {
         sensor_display_->SetSensorType(SensorDisplay::COMPASS);
       break;
     case MODE_PATTERN:
-      if (sub_mode == 2) {
-        blinker_->SetPredefinedPattern(0);
+      if (sub_mode == 1) {
         blinker_->Register(component_driver_);
       } else {
-        time_display_->Register(component_driver_);
+        time_bar_display_->Register(component_driver_);
       }
       break;
   }

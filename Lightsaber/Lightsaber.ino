@@ -7,15 +7,19 @@
 //#include <SD.h>
 
 #include "base.h"
+#include "blinker.h"
 #include "command_handler.h"
 #include "command_parser.h"
 #include "component_driver.h"
 #include "digital_clock.h"
+#include "flashlight.h"
 #include "prefs.h"
+#include "rainbow.h"
 #include "sensor_display.h"
 #include "shock_flash.h"
 #include "static_picture_display.h"
-#include "time_display.h"
+#include "time_bar_display.h"
+// #include "time_display.h"
 
 #define LED_PIN 6
 #define BLUEFRUIT_SPI_CS 8
@@ -34,19 +38,25 @@ RTC_PCF8523 rtc;
 
 Prefs prefs;
 
-StaticPictureDisplay static_picture(&strip, &sensor);
+Blinker blinker(&strip);
+// StaticPictureDisplay static_picture(&strip, &sensor);
 DigitalClock digital_clock(&strip, &rtc);
+Flashlight flashlight(&strip, &prefs);
+Rainbow rainbow(&strip);
 SensorDisplay sensor_display(&strip, &sensor);
 ShockFlash shock_flash(&strip, &sensor, &prefs);
-TimeDisplay time_display(&strip, &sensor, &rtc);
+TimeBarDisplay time_bar_display(&strip, &sensor, &rtc);
+// TimeDisplay time_display(&strip, &sensor, &rtc);
 
 ComponentDriver component_driver;
 CommandHandler command_handler(&component_driver, &prefs, &rtc,
-    &static_picture,
+    &blinker,
     &shock_flash,
     &digital_clock,
     &sensor_display,
-    &time_display);
+    &time_bar_display,
+    &flashlight,
+    &rainbow);
 CommandParser command_parser(&ble, &command_handler);
 
 void setup() {
@@ -71,13 +81,14 @@ void setup() {
 
   ble.setMode(BLUEFRUIT_MODE_DATA);
 
-//  blinker.SetPredefinedPattern(0);
-//  blinker.Register(&component_driver);
-//  shock_flash.Register(&component_driver);
-//  digital_clock.Register(&component_driver);
-//  sensor_display.Register(&component_driver);
-//  sensor_display.SetSensorType(SensorDisplay::GYROSCOPE);
-  time_display.Register(&component_driver);
+  // blinker.SetPredefinedPattern(0);
+  // blinker.Register(&component_driver);
+  shock_flash.Register(&component_driver);
+  // digital_clock.Register(&component_driver);
+  // sensor_display.Register(&component_driver);
+  // sensor_display.SetSensorType(SensorDisplay::GYROSCOPE);
+  // flashlight.Register(&component_driver);
+  // rainbow.Register(&component_driver);
 }
 
 void loop() {

@@ -7,18 +7,18 @@ class Component;
 class ComponentDriver;
 class Prefs;
 class SensorDisplay;
-class StaticPictureDisplay;
-class TimeDisplay;
 
 class CommandHandler {
  public:
   CommandHandler(ComponentDriver* component_driver, Prefs* prefs,
       RTC_PCF8523* rtc,
-      StaticPictureDisplay* blinker,
+      Component* blinker,
       Component* shock_flash,
       Component* digital_clock,
       SensorDisplay* sensor_display,
-      TimeDisplay* time_display);
+      Component* time_bar_display,
+      Component* flashlight,
+      Component* rainbow);
   void HandleButton(int button, bool state);
   void HandleColor(uint8_t r, uint8_t g, uint8_t b);
   void HandleSetTime(const char * time_str);
@@ -36,11 +36,13 @@ class CommandHandler {
   ComponentDriver* component_driver_;
   Prefs* prefs_;
   RTC_PCF8523* rtc_;
-  StaticPictureDisplay* blinker_;
+  Component* blinker_;
   Component* shock_flash_;
   Component* digital_clock_;
   SensorDisplay* sensor_display_;
-  TimeDisplay* time_display_;
+  Component* time_bar_display_;
+  Component* flashlight_;
+  Component* rainbow_;
 
   Mode mode_;
 };

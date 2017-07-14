@@ -58,7 +58,6 @@ const PROGMEM byte frame_segments[] = {
   0x00  // 5: 000 0000
 };
 
-Profiler profiler;
 void TimeDisplay::ShowDigitPattern(int digit, int idx,
     Adafruit_NeoPixel* strip) {
   byte ds = pgm_read_byte(digit_segments + digit);
@@ -77,7 +76,5 @@ void TimeDisplay::ShowDigitPattern(int digit, int idx,
       v = 255;
     strip->setPixelColor(10 + i, 0, v, 0);
   }
-  profiler.Start();
   strip->show();
-  profiler.Record();
 }
