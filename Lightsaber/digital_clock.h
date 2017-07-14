@@ -12,7 +12,7 @@ class DigitalClock : public Component {
 
   void Stop() override;
   void Tick() override;
-  
+
  private:
   void DisplayNumber(int n, int offset, int count, uint32_t c_off, uint32_t c_on);
   Adafruit_NeoPixel* strip_;

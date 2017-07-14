@@ -4,12 +4,18 @@
 
 #include "component.h"
 #include "component_driver.h"
-#include "motion_display.h"
+#include "static_picture_display.h"
 #include "prefs.h"
 #include "sensor_display.h"
+#include "time_display.h"
 
-CommandHandler::CommandHandler(ComponentDriver* component_driver, Prefs* prefs, RTC_PCF8523* rtc, 
-    MotionDisplay* blinker, Component* shock_flash, Component* digital_clock, SensorDisplay* sensor_display)
+CommandHandler::CommandHandler(ComponentDriver* component_driver, Prefs* prefs,
+    RTC_PCF8523* rtc,
+    StaticPictureDisplay* blinker,
+    Component* shock_flash,
+    Component* digital_clock,
+    SensorDisplay* sensor_display,
+    TimeDisplay* time_display)
     : component_driver_(component_driver),
       prefs_(prefs),
       rtc_(rtc),
@@ -17,6 +23,7 @@ CommandHandler::CommandHandler(ComponentDriver* component_driver, Prefs* prefs, 
       shock_flash_(shock_flash),
       digital_clock_(digital_clock),
       sensor_display_(sensor_display),
+      time_display_(time_display),
       mode_(MODE_OFF) {
 }
 
@@ -82,8 +89,12 @@ void CommandHandler::SwitchToMode(Mode mode, int sub_mode) {
         sensor_display_->SetSensorType(SensorDisplay::COMPASS);
       break;
     case MODE_PATTERN:
-      blinker_->SetPredefinedPattern(0);
-      blinker_->Register(component_driver_);
+      if (sub_mode == 2) {
+        blinker_->SetPredefinedPattern(0);
+        blinker_->Register(component_driver_);
+      } else {
+        time_display_->Register(component_driver_);
+      }
       break;
   }
   component_driver_->StartComponents();
