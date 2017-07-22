@@ -17,7 +17,8 @@ CommandHandler::CommandHandler(ComponentDriver* component_driver, Prefs* prefs,
     SensorDisplay* sensor_display,
     Component* time_bar_display,
     Component* flashlight,
-    Component* rainbow)
+    Component* rainbow,
+    Component* static_picture)
     : component_driver_(component_driver),
       prefs_(prefs),
       rtc_(rtc),
@@ -28,6 +29,7 @@ CommandHandler::CommandHandler(ComponentDriver* component_driver, Prefs* prefs,
       time_bar_display_(time_bar_display),
       flashlight_(flashlight),
       rainbow_(rainbow),
+      static_picture_(static_picture),
       mode_(MODE_OFF) {
 }
 
@@ -100,6 +102,8 @@ void CommandHandler::SwitchToMode(Mode mode, int sub_mode) {
     case MODE_PATTERN:
       if (sub_mode == 1) {
         blinker_->Register(component_driver_);
+      } else if (sub_mode == 2) {
+        static_picture_->Register(component_driver_);
       } else {
         time_bar_display_->Register(component_driver_);
       }

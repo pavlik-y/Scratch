@@ -22,13 +22,19 @@ void DigitalClock::Tick() {
   last_seconds_time_ = now.secondstime();
 
   // Seconds
-  DisplayNumber(now.second(), 0, 6, Adafruit_NeoPixel::Color(0, 0, 0), Adafruit_NeoPixel::Color(100, 0, 0)); 
-  
+  DisplayNumber(now.second(), 0, 6,
+      Adafruit_NeoPixel::Color(0, 0, 0),
+      Adafruit_NeoPixel::Color(100, 0, 0));
+
   // Minutes
-  DisplayNumber(now.minute(), kMinuteOffset, 6, Adafruit_NeoPixel::Color(0, 0, 0), Adafruit_NeoPixel::Color(0, 100, 0)); 
-  
+  DisplayNumber(now.minute(), kMinuteOffset, 6,
+      Adafruit_NeoPixel::Color(0, 0, 0),
+      Adafruit_NeoPixel::Color(0, 100, 0));
+
   // Hours
-  DisplayNumber(now.hour(), kHourOffset, 5, Adafruit_NeoPixel::Color(0, 0, 0), Adafruit_NeoPixel::Color(0, 0, 100)); 
+  DisplayNumber(now.hour(), kHourOffset, 5,
+      Adafruit_NeoPixel::Color(0, 0, 0),
+      Adafruit_NeoPixel::Color(0, 0, 100));
   strip_->show();
 }
 

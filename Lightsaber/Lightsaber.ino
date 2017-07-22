@@ -39,12 +39,12 @@ RTC_PCF8523 rtc;
 Prefs prefs;
 
 Blinker blinker(&strip);
-// StaticPictureDisplay static_picture(&strip, &sensor);
 DigitalClock digital_clock(&strip, &rtc);
 Flashlight flashlight(&strip, &prefs);
 Rainbow rainbow(&strip);
 SensorDisplay sensor_display(&strip, &sensor);
 ShockFlash shock_flash(&strip, &sensor, &prefs);
+StaticPictureDisplay static_picture(&strip, &sensor);
 TimeBarDisplay time_bar_display(&strip, &sensor, &rtc);
 // TimeDisplay time_display(&strip, &sensor, &rtc);
 
@@ -56,7 +56,8 @@ CommandHandler command_handler(&component_driver, &prefs, &rtc,
     &sensor_display,
     &time_bar_display,
     &flashlight,
-    &rainbow);
+    &rainbow,
+    &static_picture);
 CommandParser command_parser(&ble, &command_handler);
 
 void setup() {
@@ -81,8 +82,8 @@ void setup() {
 
   ble.setMode(BLUEFRUIT_MODE_DATA);
 
-  // blinker.SetPredefinedPattern(0);
-  // blinker.Register(&component_driver);
+  static_picture.SetPredefinedPattern(0);
+  // static_picture.Register(&component_driver);
   shock_flash.Register(&component_driver);
   // digital_clock.Register(&component_driver);
   // sensor_display.Register(&component_driver);

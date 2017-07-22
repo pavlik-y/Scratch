@@ -18,7 +18,8 @@ class CommandHandler {
       SensorDisplay* sensor_display,
       Component* time_bar_display,
       Component* flashlight,
-      Component* rainbow);
+      Component* rainbow,
+      Component* static_picture);
   void HandleButton(int button, bool state);
   void HandleColor(uint8_t r, uint8_t g, uint8_t b);
   void HandleSetTime(const char * time_str);
@@ -40,6 +41,7 @@ class CommandHandler {
   Component* shock_flash_;
   Component* digital_clock_;
   SensorDisplay* sensor_display_;
+  Component* static_picture_;
   Component* time_bar_display_;
   Component* flashlight_;
   Component* rainbow_;

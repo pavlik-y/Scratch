@@ -58,6 +58,7 @@ void MotionDisplay::ShowFrame(int frame_idx) {
 
 void MotionDisplay::RestartSequence(unsigned long now) {
   sequence_interval_ = now - sequence_start_time_;
+  // sequence_interval_ = 5000;
   sequence_start_time_ = now;
   OnSequenceStart();
 }
