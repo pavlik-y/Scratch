@@ -1,7 +1,7 @@
 #ifndef COMPONENT_H_
 #define COMPONENT_H_
 
-#include <Arduion.h>
+#include <Arduino.h>
 #include "common.h"
 #include "command_buffer.h"
 
@@ -26,20 +26,20 @@ public:
     if (components_ == NULL)
       halt(100);
   }
-  
+
   void RegisterComponent(Component* component) {
     if (size_ >= capacity_)
       halt(100);
     components_[size_] = component;
     ++size_;
   }
-  
+
   void Update() {
     for (int i = 0; i < size_; ++i) {
       components_[i]->Update();
     }
   }
-  
+
   bool HandleCommand(CommandBuffer& cb) {
     for (int i = 0; i < size_; ++i) {
       if (components_[i]->HandleCommand(cb))
@@ -53,7 +53,7 @@ public:
       components_[i]->ReadConfig(config);
     }
   }
-  
+
 private:
   Component** components_;
   int size_;

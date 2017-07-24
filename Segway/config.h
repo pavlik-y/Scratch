@@ -36,19 +36,19 @@
 class Config : public Component {
 public:
   static const size_t kValueSize = 4;
-  
+
   Config() {
     initialized = false;
     version = 0;
   }
-  
+
   void Setup() {
     if (!initialized && ((int)ReadFloat(0) == CalcHash())) {
       initialized = true;
       ++version;
     }
   }
-  
+
   int FindEntry(const char* name) {
     for (int i = 0; (char*)pgm_read_word(&(entries_[i])) != NULL; ++i) {
       if (strcmp_P(name, (char*)pgm_read_word(&(entries_[i]))) == 0)
@@ -56,15 +56,15 @@ public:
     }
     return -1;
   }
-  
-  int FindEntry_P(const prog_char* name) {
+
+  int FindEntry_P(const char* name) {
     for (int i = 0; (char*)pgm_read_word(&(entries_[i])) != NULL; ++i) {
       if (name == (char*)pgm_read_word(&(entries_[i])))
         return i;
     }
     return -1;
   }
-  
+
   float ReadFloat(int i) {
     if (i == -1)
       halt(200);
@@ -74,12 +74,12 @@ public:
       ptr[j] = EEPROM.read(i * sizeof(float) + j);
     return value;
   }
-  
-  float ReadFloat_P(const prog_char* name) {
+
+  float ReadFloat_P(const char* name) {
     int i = FindEntry_P(name);
     return ReadFloat(i);
   }
-  
+
   void WriteFloat(int i, double value) {
     Serial.println(value);
     if (i == -1)
@@ -88,20 +88,20 @@ public:
     for (int j = 0; j < sizeof(float); ++j)
       EEPROM.write(i *  sizeof(float) + j, ptr[j]);
   }
-  
+
   int CalcHash() {
     int hash = 0;
     for (int i = 0; (char*)pgm_read_word(&(entries_[i])) != NULL; ++i) {
-      const prog_char* name = (char*)pgm_read_word(&(entries_[i]));
-      for (int j = 0; pgm_read_byte(&name[j]) != 0; ++j) 
+      const char* name = (char*)pgm_read_word(&(entries_[i]));
+      for (int j = 0; pgm_read_byte(&name[j]) != 0; ++j)
         hash += (int)pgm_read_byte(&name[j]);
     }
     return hash;
   }
-  
+
   virtual void Update() {
   }
-  
+
   virtual bool HandleCommand(CommandBuffer& cb) {
     if (strcmp_P(cb.command, PSTR("RdConfig")) == 0) {
       cb.BeginResponse();
@@ -151,20 +151,20 @@ public:
     }
     return false;
   }
-  
+
   bool initialized;
   Version version;
 private:
-  static const prog_char* entries_[];
+  static const char* const entries_[];
 };
 
-#define DEFINE_CONFIG_VALUE(const_name, config_name) prog_char const_name[] PROGMEM = config_name;
+#define DEFINE_CONFIG_VALUE(const_name, config_name) const char const_name[] PROGMEM = config_name;
 
 CONFIG_VALUES(DEFINE_CONFIG_VALUE)
 
 #define ADD_CONFIG_VALUE_TO_ARRAY(const_name, config_name) const_name,
 
-PROGMEM const prog_char* Config::entries_[] = {
+const char* const Config::entries_[] PROGMEM = {
 CONFIG_VALUES(ADD_CONFIG_VALUE_TO_ARRAY)
   NULL
 };

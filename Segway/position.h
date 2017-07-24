@@ -1,7 +1,7 @@
 #ifndef POSITION_H_
 #define POSITION_H_
 
-#include <Android.h>
+#include <Arduino.h>
 
 #include "common.h"
 #include "component.h"
@@ -30,7 +30,7 @@ public:
     lambda_ = config->ReadFloat_P(kPos_Lambda);
     sample_interval_ = config->ReadFloat_P(kPos_SampleInterval);
   }
-  
+
   virtual void Update() {
     unsigned long now = millis();
     if (ElapsedTime(sample_time, now) < sample_interval_)
@@ -50,7 +50,7 @@ public:
     sample_time = now;
     ++version;
   }
-  
+
   virtual bool HandleCommand(CommandBuffer& cb) {
     if (strcmp_P(cb.command, PSTR("RdPos")) == 0) {
       cb.BeginResponse();
@@ -62,13 +62,13 @@ public:
     }
     return false;
   }
-  
+
   Version version;
   double pos;
   double velocity;
   unsigned long sample_time;
   double avg_velocity;
-  
+
 private:
   MotorEncoder* left_encoder_;
   MotorEncoder* right_encoder_;
