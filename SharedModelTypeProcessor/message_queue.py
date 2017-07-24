@@ -14,7 +14,7 @@ class MessageQueue:
     self.queue = []
   def CreateObjectProxy(self, target):
     return ObjectProxy(self, target)
-  def Enqueue(self, closure):
+  def Post(self, closure):
     self.queue.append(closure)
   def Run(self):
     while len(self.queue) > 0:
