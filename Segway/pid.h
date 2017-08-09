@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 #include "common.h"
-#include "component.h"
+#include "component_manager.h"
 #include "config.h"
 
 class PidController {
@@ -17,7 +17,7 @@ public:
     Kd = 0.3;
     setpoint = 0.0;
   }
-  
+
   void CalcOutput(double v, double de, double dt) {
     double e = v - setpoint;
     ie += e * dt;
@@ -28,18 +28,18 @@ public:
 //    ie += lambda * (e * dt - ie);
     output = Kp * e + Ki * ie + Kd * de;
   }
-  
+
   void SetCoefficients(double Kp_, double Ki_, double Kd_, double lambda_) {
     Kp = Kp_;
     Ki = Ki_;
     Kd = Kd_;
     lambda = lambda_;
   }
-  
+
   void SetSetpoint(double setpoint_) {
     setpoint = setpoint_;
   }
-  
+
   double output;
   double ie;
   double lambda;

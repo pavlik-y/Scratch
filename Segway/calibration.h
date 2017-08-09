@@ -5,14 +5,14 @@
 
 #include "accel.h"
 #include "common.h"
-#include "component.h"
+#include "component_manager.h"
 #include "gyro.h"
 #include "motor.h"
 #include "sensor_fusion.h"
 
 class Calibration : public Component{
 public:
-  
+
   void Setup(Accel* accel, Gyro* gyro, SensorFusion* sensor_fusion, MotorDriver* motor_driver) {
     state = 2;
     accel_ = accel;
@@ -20,14 +20,14 @@ public:
     gyro_version_ = gyro_->version;
     sensor_fusion_ = sensor_fusion;
     motor_driver_ = motor_driver;
-    
+
     avg_accel_angle = 0;
     accel_angle_div = 0;
     avg_lambda = 0.01;
     calibration_duration = 10000;
     version = 0;
   }
-  
+
   virtual void Update() {
     if (gyro_version_ == gyro_->version)
       return;
@@ -66,7 +66,7 @@ public:
       }
     }
   }
-  
+
   virtual bool HandleCommand(CommandBuffer& cb) {
     if (strcmp_P(cb.command, PSTR("RdCal")) == 0) {
       cb.BeginResponse();
@@ -86,10 +86,10 @@ public:
     }
     return false;
   }
-  
+
   virtual void ReadConfig(Config* config) {
   }
-  
+
   Version version;
   int state;
   double avg_accel_angle;

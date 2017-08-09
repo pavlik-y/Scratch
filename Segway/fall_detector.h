@@ -16,7 +16,7 @@ public:
     start_upright_time_ = millis();
     version = 0;
   }
-  
+
   virtual void Update() {
     if (sensor_fusion_version_ == sensor_fusion_->version)
       return;
@@ -33,7 +33,7 @@ public:
       ++version;
     }
   }
-  
+
   virtual bool HandleCommand(CommandBuffer& cb) {
     if (strcmp_P(cb.command, PSTR("RdFD")) == 0) {
       cb.BeginResponse();
@@ -45,7 +45,7 @@ public:
     }
     return false;
   }
-  
+
   bool standing;
   Version version;
 private:

@@ -5,7 +5,7 @@
 #include <IRremote.h>
 
 #include "common.h"
-#include "component.h"
+#include "component_manager.h"
 
 
 class IR : public Component {
@@ -17,7 +17,7 @@ public:
     Left,
     Right,
   };
-  
+
   void Setup(int ir_pin) {
     irrecv_ = new IRrecv(ir_pin);
     irrecv_->enableIRIn();
@@ -25,7 +25,7 @@ public:
     version = 0;
     last_command_time_ = millis();
   }
-  
+
   virtual void Update() {
     unsigned long now = millis();
     if (command != Stop && (now - last_command_time_) > 250) {
@@ -33,14 +33,14 @@ public:
       ++version;
       return;
     }
-    
+
     decode_results results;
     if (!irrecv_->decode(&results))
       return;
     Serial.println(results.value, HEX);
     irrecv_->resume(); // Receive the next value
     last_command_time_ = now;
-    
+
     if (results.value == 0xFFFFFFFF)
       return;
     if (command != Stop)
@@ -66,11 +66,11 @@ public:
       return;
     }
   }
-  
+
   virtual bool HandleCommand(CommandBuffer& cb) {
     return false;
   }
-  
+
   virtual void ReadConfig(Config* config) {
   }
 

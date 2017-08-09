@@ -9,11 +9,10 @@
 #include "accel.h"
 #include "calibration.h"
 #include "command_buffer.h"
+#include "component_manager.h"
 #include "config.h"
-#include "component.h"
 #include "fall_detector.h"
 #include "gyro.h"
-#include "I2CDevice.h"
 #include "ir.h"
 #include "motor.h"
 #include "motor_controller.h"
@@ -72,8 +71,6 @@ PidController velocity_to_angle;
 PidController angle_to_power;
 
 
-
-
 //void ReadLeftEncoder() {
 //  left_encoder.Read();
 //}
@@ -102,10 +99,10 @@ void setup() {
       LEFT_MOTOR_A, LEFT_MOTOR_B, LEFT_MOTOR_EN,
       RIGHT_MOTOR_A, RIGHT_MOTOR_B, RIGHT_MOTOR_EN);
   motor_driver.SetupTimer1();
-  
-  
+
+
   config_version = config.version;
-  
+
   config.Setup();
   component_manager.RegisterComponent(&config);
   potentiometer.Setup();
@@ -131,10 +128,10 @@ void setup() {
   component_manager.RegisterComponent(&calibration);
   motor_controller.Setup(&motor_driver, &tilt_controller, &fall_detector, &calibration, &ir);
   component_manager.RegisterComponent(&motor_controller);
-  
+
 //  diag.Setup(&sensor_fusion, &balancer);
 //  component_manager.RegisterComponent(&diag);
-   
+
   SetupInterrupts();
 }
 
@@ -153,7 +150,7 @@ void ProcessCommand(CommandBuffer& cb) {
 }
 
 void loop() {
-  component_manager.Update( );
+  component_manager.Update();
 
   if (command_buffer.ReadCommand()) {
     ProcessCommand(command_buffer);

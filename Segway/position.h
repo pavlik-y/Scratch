@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 #include "common.h"
-#include "component.h"
+#include "component_manager.h"
 #include "motor.h"
 
 //static const double kPosFactor = 0.015625;

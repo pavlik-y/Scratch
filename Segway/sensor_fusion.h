@@ -6,7 +6,7 @@
 #include "accel.h"
 #include "command_buffer.h"
 #include "common.h"
-#include "component.h"
+#include "component_manager.h"
 #include "config.h"
 #include "motor.h"
 
@@ -22,7 +22,7 @@ public:
     version = 0;
     lambda_ = 0;
   }
-  
+
   virtual void Update() {
     if (gyro_version_ != gyro_->version) {
       gyro_version_ = gyro_->version;
@@ -30,11 +30,11 @@ public:
       ++version;
     }
   }
-  
+
   virtual void ReadConfig(Config* config) {
     lambda_ = config->ReadFloat_P(kSF_Lambda);
   }
-  
+
   void UpdateAngle() {
     gyro_rate = gyro_->rate;
     accel_angle = accel_->angle;
@@ -58,7 +58,7 @@ public:
     }
     return false;
   }
-  
+
   void SynchronizeAngles(double angle) {
     gyro_angle = angle;
     complementary_angle = angle;
@@ -70,7 +70,7 @@ public:
   double accel_angle;
   double complementary_angle;
   double avg_accel_angle;
-  
+
 private:
   Gyro* gyro_;
   Version gyro_version_;

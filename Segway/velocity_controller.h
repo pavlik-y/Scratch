@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 #include "common.h"
-#include "component.h"
+#include "component_manager.h"
 #include "ir.h"
 #include "position.h"
 #include "potentiometer.h"
@@ -22,7 +22,7 @@ public:
     version = 0;
     velocity_to_angle_->SetSetpoint(0.0);
   }
-  
+
   virtual void Update() {
     if (position_version_ == position_->version &&
         ir_version_ == ir_->version)
@@ -41,7 +41,7 @@ public:
     position_version_ = position_->version;
     ++version;
   }
-  
+
   virtual bool HandleCommand(CommandBuffer& cb) {
     if (strcmp_P(cb.command, PSTR("RdVelCtrl")) == 0) {
       cb.BeginResponse();
@@ -53,19 +53,19 @@ public:
     }
     return false;
   }
-  
+
   virtual void ReadConfig(Config* config) {
     double kp = config->ReadFloat_P(kVelCtrl_KP);
     double ki = config->ReadFloat_P(kVelCtrl_KI);
     double kd = config->ReadFloat_P(kVelCtrl_KD);
     double lambda = config->ReadFloat_P(kVelCtrl_KL);
-    
+
     velocity_to_angle_->SetCoefficients(kp, ki, kd, lambda);
   }
-  
+
   Version version;
   double angle_offset;
-  
+
 private:
   Position* position_;
   Version position_version_;
@@ -74,7 +74,7 @@ private:
   Version ir_version_;
   PidController* velocity_to_angle_;
   unsigned long last_sample_time_;
-  
+
 };
 
 #endif

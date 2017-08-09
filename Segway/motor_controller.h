@@ -27,7 +27,7 @@ public:
     right_zero_ = 0;
     right_one_ = 0;
   }
-  
+
   virtual void ReadConfig(Config* config) {
     left_zero_ = config->ReadFloat_P(kMotor_LeftZero);
     left_one_ = config->ReadFloat_P(kMotor_LeftOne);
@@ -36,12 +36,12 @@ public:
     turn_offset_ = config->ReadFloat_P(kMotor_TurnOffset);
     motor_enabled_ = config->ReadFloat_P(kMotor_Enabled) > 0.5;
   }
-  
+
   virtual void Update() {
-    if (tilt_controller_version_ == tilt_controller_->version && 
+    if (tilt_controller_version_ == tilt_controller_->version &&
         fall_detector_version_ == fall_detector_->version &&
         calibration_version_ == calibration_->version &&
-        ir_version_ == ir_->version) 
+        ir_version_ == ir_->version)
        return;
     tilt_controller_version_ = tilt_controller_->version;
     fall_detector_version_ = fall_detector_->version;
@@ -52,7 +52,7 @@ public:
       motor_driver_->SetPower(1, 0, 1, 0);
       return;
     }
-    
+
     double left_power = tilt_controller_->power;
     double right_power = tilt_controller_->power;
     if (ir_->command == IR::Left) {
@@ -64,7 +64,7 @@ public:
     }
     left_power = constrain(left_power, -1.0, 1.0);
     right_power = constrain(right_power, -1.0, 1.0);
-    
+
     int left_direction = 1;
     int right_direction = 1;
     if (left_power < 0) {
@@ -92,7 +92,7 @@ public:
     }
     return false;
   }
-  
+
 private:
   MotorDriver* motor_driver_;
   TiltController* tilt_controller_;
@@ -113,7 +113,7 @@ private:
 
   double right_zero_;
   double right_one_;
-  
+
   double turn_offset_;
 };
 

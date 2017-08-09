@@ -3,19 +3,19 @@
 
 #include <Arduino.h>
 #include "common.h"
-#include "component.h"
+#include "component_manager.h"
 
 class Potentiometer : public Component {
 public:
-  
+
   void Setup() {
     version = 0;
     last_sample = millis();
   }
-  
+
   virtual void Update() {
     unsigned long now = millis();
-    if ((now - last_sample) < 10) 
+    if ((now - last_sample) < 10)
       return;
     value = double(analogRead(2)) / 1024.0;
     last_sample = now;
@@ -31,11 +31,11 @@ public:
     }
     return false;
   }
-  
+
   double StepValue(int steps) {
     return double(int(constrain(value, 0.0, 0.99999) * double(steps)));
   }
-  
+
   Version version;
   double value;
   unsigned long last_sample;

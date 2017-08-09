@@ -4,17 +4,19 @@
 #include <Arduino.h>
 #include <math.h>
 #include "command_buffer.h"
-#include "component.h"
+#include "component_manager.h"
 #include "common.h"
 #include "config.h"
-#include "I2CDevice.h"
+#include "i2c_device.h"
 #include "gyro.h"
 
 // ADXL345: http://www.analog.com/static/imported-files/data_sheets/ADXL345.pdf
 class Accel : public Component {
 public:
+  Accel()
+      : device_(0x53) {}
+
   void Setup(Gyro* gyro) {
-    device_.SetAddr(0x53);
     byte devId = device_.ReadByteRegister(0x0);
     if (devId != B11100101)
       halt(1000);
@@ -27,7 +29,7 @@ public:
     gyro_version_ = gyro_->version;
     version = 0;
   }
-  
+
   virtual void Update() {
     if (gyro_version_ != gyro_->version) {
       gyro_version_ = gyro_->version;
@@ -35,7 +37,7 @@ public:
       ++version;
     }
   }
-  
+
   virtual void ReadConfig(Config* config) {
     xBias_ = (int)config->ReadFloat_P(kAccel_BiasX);
     zBias_ = (int)config->ReadFloat_P(kAccel_BiasZ);
