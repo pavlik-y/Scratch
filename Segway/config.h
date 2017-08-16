@@ -37,120 +37,16 @@ class Config : public Component {
 public:
   static const size_t kValueSize = 4;
 
-  Config() {
-    initialized = false;
-    version = 0;
-  }
-
-  void Setup() {
-    if (!initialized && ((int)ReadFloat(0) == CalcHash())) {
-      initialized = true;
-      ++version;
-    }
-  }
-
-  int FindEntry(const char* name) {
-    for (int i = 0; (char*)pgm_read_word(&(entries_[i])) != NULL; ++i) {
-      if (strcmp_P(name, (char*)pgm_read_word(&(entries_[i]))) == 0)
-        return i;
-    }
-    return -1;
-  }
-
-  int FindEntry_P(const char* name) {
-    for (int i = 0; (char*)pgm_read_word(&(entries_[i])) != NULL; ++i) {
-      if (name == (char*)pgm_read_word(&(entries_[i])))
-        return i;
-    }
-    return -1;
-  }
-
-  float ReadFloat(int i) {
-    if (i == -1)
-      halt(200);
-    float value;
-    byte* ptr = (byte*)&value;
-    for (int j = 0; j < sizeof(float); ++j)
-      ptr[j] = EEPROM.read(i * sizeof(float) + j);
-    return value;
-  }
-
-  float ReadFloat_P(const char* name) {
-    int i = FindEntry_P(name);
-    return ReadFloat(i);
-  }
-
-  void WriteFloat(int i, double value) {
-    Serial.println(value);
-    if (i == -1)
-      halt(200);
-    byte* ptr = (byte*)&value;
-    for (int j = 0; j < sizeof(float); ++j)
-      EEPROM.write(i *  sizeof(float) + j, ptr[j]);
-  }
-
-  int CalcHash() {
-    int hash = 0;
-    for (int i = 0; (char*)pgm_read_word(&(entries_[i])) != NULL; ++i) {
-      const char* name = (char*)pgm_read_word(&(entries_[i]));
-      for (int j = 0; pgm_read_byte(&name[j]) != 0; ++j)
-        hash += (int)pgm_read_byte(&name[j]);
-    }
-    return hash;
-  }
-
-  virtual void Update() {
-  }
-
-  virtual bool HandleCommand(CommandBuffer& cb) {
-    if (strcmp_P(cb.command, PSTR("RdConfig")) == 0) {
-      cb.BeginResponse();
-      const char* name = cb.GetStringParam(0);
-      int i = FindEntry(name);
-      if (i == -1) {
-        cb.WriteValue(name);
-        cb.EndResponse();
-        return true;
-      }
-      cb.WriteValue(i);
-      cb.WriteValue(ReadFloat(i));
-      cb.EndResponse();
-      return true;
-    }
-    if (strcmp_P(cb.command, PSTR("WrConfig")) == 0) {
-      cb.BeginResponse();
-      const char* name = cb.GetStringParam(0);
-      int i = FindEntry(name);
-      if (i == -1) {
-        cb.WriteValue(name);
-        cb.EndResponse();
-        return true;
-      }
-      WriteFloat(i, cb.GetFloatParam(1));
-      Serial.println("done");
-      cb.WriteValue("Ok");
-      cb.EndResponse();
-      if (!initialized && ((int)ReadFloat(0) == CalcHash())) {
-        initialized = true;
-      }
-      ++version;
-      return true;
-    }
-    if (strcmp_P(cb.command, PSTR("LstConfig")) == 0) {
-      cb.BeginResponse();
-      cb.WriteValue(initialized);
-      cb.WriteValue(version);
-      cb.WriteValue(CalcHash());
-      char buf[64];
-      for (int i = 0; (char*)pgm_read_word(&(entries_[i])) != NULL; ++i) {
-        strcpy_P(buf, (char*)pgm_read_word(&(entries_[i])));
-        cb.WriteValue(buf);
-      }
-      cb.EndResponse();
-      return true;
-    }
-    return false;
-  }
+  Config();
+  void Setup();
+  int FindEntry(const char* name);
+  int FindEntry_P(const char* name);
+  float ReadFloat(int i);
+  float ReadFloat_P(const char* name);
+  void WriteFloat(int i, double value);
+  int CalcHash();
+  void Update() override;
+  bool HandleCommand(CommandBuffer& cb);
 
   bool initialized;
   Version version;
@@ -158,15 +54,8 @@ private:
   static const char* const entries_[];
 };
 
-#define DEFINE_CONFIG_VALUE(const_name, config_name) const char const_name[] PROGMEM = config_name;
+#define DECLARE_CONFIG_VALUE(const_name, config_name) extern const char const_name[] PROGMEM;
 
-CONFIG_VALUES(DEFINE_CONFIG_VALUE)
-
-#define ADD_CONFIG_VALUE_TO_ARRAY(const_name, config_name) const_name,
-
-const char* const Config::entries_[] PROGMEM = {
-CONFIG_VALUES(ADD_CONFIG_VALUE_TO_ARRAY)
-  NULL
-};
+CONFIG_VALUES(DECLARE_CONFIG_VALUE)
 
 #endif
