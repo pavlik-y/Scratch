@@ -16,9 +16,8 @@
 #include "ir.h"
 #include "motor.h"
 #include "motor_controller.h"
-#include "pid.h"
+#include "pid_controller.h"
 #include "position.h"
-#include "potentiometer.h"
 #include "sensor_fusion.h"
 #include "tilt_controller.h"
 #include "velocity_controller.h"
@@ -55,7 +54,6 @@ FallDetector fall_detector;
 Gyro gyro;
 MotorController motor_controller;
 Position position;
-Potentiometer potentiometer;
 SensorFusion sensor_fusion;
 
 IR ir;
@@ -105,8 +103,6 @@ void setup() {
 
   config.Setup();
   component_manager.RegisterComponent(&config);
-  potentiometer.Setup();
-  component_manager.RegisterComponent(&potentiometer);
   ir.Setup(IR_IN);
   component_manager.RegisterComponent(&ir);
   gyro.Setup();
@@ -120,9 +116,9 @@ void setup() {
   component_manager.RegisterComponent(&sensor_fusion);
   fall_detector.Setup(&sensor_fusion);
   component_manager.RegisterComponent(&fall_detector);
-  velocity_controller.Setup(&velocity_to_angle, &position, &potentiometer, &ir);
+  velocity_controller.Setup(&velocity_to_angle, &position, &ir);
   component_manager.RegisterComponent(&velocity_controller);
-  tilt_controller.Setup(&sensor_fusion, &angle_to_power, &velocity_controller, &potentiometer);
+  tilt_controller.Setup(&sensor_fusion, &angle_to_power, &velocity_controller);
   component_manager.RegisterComponent(&tilt_controller);
   calibration.Setup(&accel, &gyro, &sensor_fusion, &motor_driver);
   component_manager.RegisterComponent(&calibration);

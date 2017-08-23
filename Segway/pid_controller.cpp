@@ -1,4 +1,4 @@
-#include "pid.h"
+#include "pid_controller.h"
 
 PidController::PidController()
     : ie(0.0),

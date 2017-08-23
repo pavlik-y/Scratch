@@ -4,9 +4,10 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
-#include "command_buffer.h"
 #include "common.h"
 #include "component.h"
+
+class CommandBuffer;
 
 #define CONFIG_VALUES(F) \
   F(kConfigHash, "ConfigHash") \

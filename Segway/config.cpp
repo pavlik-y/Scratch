@@ -1,5 +1,7 @@
 #include "config.h"
 
+#include "command_buffer.h"
+
 #define DEFINE_CONFIG_VALUE(const_name, config_name) const char const_name[] PROGMEM = config_name;
 
 CONFIG_VALUES(DEFINE_CONFIG_VALUE)
