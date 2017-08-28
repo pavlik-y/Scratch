@@ -2,9 +2,6 @@
 #include <EEPROM.h>
 #include <SoftwareSerial.h>
 #include <Wire.h>
-#include <math.h>
-
-#include <IRremote.h>
 
 #include "accel.h"
 #include "calibration.h"
@@ -13,7 +10,6 @@
 #include "config.h"
 #include "fall_detector.h"
 #include "gyro.h"
-#include "ir.h"
 #include "motor.h"
 #include "motor_controller.h"
 #include "pid_controller.h"
@@ -35,7 +31,6 @@ const int RIGHT_ENCODER_B = 4;
 //const int LEFT_ENCODER_B = 5;
 const int BLUETOOTH_RX = 12;
 const int BLUETOOTH_TX = 13;
-const int IR_IN = 3;
 
 
 //MotorEncoder left_encoder;
@@ -55,8 +50,6 @@ Gyro gyro;
 MotorController motor_controller;
 Position position;
 SensorFusion sensor_fusion;
-
-IR ir;
 
 TiltController tilt_controller;
 VelocityController velocity_controller;
@@ -103,8 +96,6 @@ void setup() {
 
   config.Setup();
   component_manager.RegisterComponent(&config);
-  ir.Setup(IR_IN);
-  component_manager.RegisterComponent(&ir);
   gyro.Setup();
   component_manager.RegisterComponent(&gyro);
   accel.Setup(&gyro);
@@ -116,13 +107,14 @@ void setup() {
   component_manager.RegisterComponent(&sensor_fusion);
   fall_detector.Setup(&sensor_fusion);
   component_manager.RegisterComponent(&fall_detector);
-  velocity_controller.Setup(&velocity_to_angle, &position, &ir);
+  velocity_controller.Setup(&velocity_to_angle, &position);
   component_manager.RegisterComponent(&velocity_controller);
   tilt_controller.Setup(&sensor_fusion, &angle_to_power, &velocity_controller);
   component_manager.RegisterComponent(&tilt_controller);
   calibration.Setup(&accel, &gyro, &sensor_fusion, &motor_driver);
   component_manager.RegisterComponent(&calibration);
-  motor_controller.Setup(&motor_driver, &tilt_controller, &fall_detector, &calibration, &ir);
+  motor_controller.Setup(
+      &motor_driver, &tilt_controller, &fall_detector, &calibration);
   component_manager.RegisterComponent(&motor_controller);
 
 //  diag.Setup(&sensor_fusion, &balancer);

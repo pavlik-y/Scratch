@@ -2,36 +2,33 @@
 
 #include "command_buffer.h"
 #include "config.h"
-#include "ir.h"
 #include "pid_controller.h"
 #include "position.h"
 
-void VelocityController::Setup(PidController* velocity_to_angle, Position* position, IR* ir) {
+void VelocityController::Setup(
+    PidController* velocity_to_angle, Position* position) {
   velocity_to_angle_ = velocity_to_angle;
   position_ = position;
   position_version_ = position_->version;
   last_sample_time_ = position_->sample_time;
-  ir_ = ir;
-  ir_version_ = ir_->version;
   version = 0;
   velocity_to_angle_->SetSetpoint(0.0);
 }
 
 void VelocityController::Update() {
-  if (position_version_ == position_->version &&
-      ir_version_ == ir_->version)
+  if (position_version_ == position_->version)
     return;
+  position_version_ = position_->version;
   unsigned long now = position_->sample_time;
   double set_velocity = 0;
-  if (ir_->command == IR::Forward)
-    set_velocity = 30.0;
-  else if(ir_->command == IR::Back)
-    set_velocity = -30.0;
+  // if (ir_->command == IR::Forward)
+  //   set_velocity = 30.0;
+  // else if(ir_->command == IR::Back)
+  //   set_velocity = -30.0;
   velocity_to_angle_->SetSetpoint(set_velocity);
   velocity_to_angle_->CalcOutput(position_->velocity, 0, ElapsedTime(last_sample_time_, now));
   angle_offset = constrain(velocity_to_angle_->output, -5.0, 5.0);
   last_sample_time_ = now;
-  position_version_ = position_->version;
   ++version;
 }
 

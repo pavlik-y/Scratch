@@ -8,13 +8,12 @@
 
 class CommandBuffer;
 class Config;
-class IR;
 class PidController;
 class Position;
 
 class VelocityController : public Component {
 public:
-  void Setup(PidController* velocity_to_angle, Position* position, IR* ir);
+  void Setup(PidController* velocity_to_angle, Position* position);
   void Update() override;
   bool HandleCommand(CommandBuffer& cb) override;
   void ReadConfig(Config* config) override;
@@ -24,8 +23,6 @@ public:
 private:
   Position* position_;
   Version position_version_;
-  IR* ir_;
-  Version ir_version_;
   PidController* velocity_to_angle_;
   unsigned long last_sample_time_;
 };
