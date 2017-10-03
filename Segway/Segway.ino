@@ -12,7 +12,7 @@
 #include "gyro.h"
 #include "motor.h"
 #include "motor_controller.h"
-#include "pid_controller.h"
+#include "motor_encoder.h"
 #include "position.h"
 #include "sensor_fusion.h"
 #include "tilt_controller.h"
@@ -34,9 +34,11 @@ const int BLUETOOTH_TX = 13;
 
 
 //MotorEncoder left_encoder;
-MotorEncoder right_encoder;
-MotorDriver motor_driver;
-
+MotorEncoder right_encoder(RIGHT_ENCODER_A, RIGHT_ENCODER_B);
+MotorDriver motor_driver(LEFT_MOTOR_A, LEFT_MOTOR_B, LEFT_MOTOR_EN,
+                         RIGHT_MOTOR_A, RIGHT_MOTOR_B, RIGHT_MOTOR_EN);
+SoftwareSerial bt(BLUETOOTH_RX, BLUETOOTH_TX);
+CommandBuffer command_buffer;
 
 ComponentManager component_manager(15);
 
@@ -50,17 +52,10 @@ Gyro gyro;
 MotorController motor_controller;
 Position position;
 SensorFusion sensor_fusion;
-
 TiltController tilt_controller;
 VelocityController velocity_controller;
 
-SoftwareSerial bt(BLUETOOTH_RX, BLUETOOTH_TX);
-CommandBuffer command_buffer;
-
-PidController position_to_velocity;
-PidController velocity_to_angle;
 PidController angle_to_power;
-
 
 //void ReadLeftEncoder() {
 //  left_encoder.Read();
@@ -79,40 +74,46 @@ void setup() {
   Wire.begin();
   Serial.begin(115200);
   Serial.println("Restart");
+
   bt.begin(9600);
   bt.listen();
 
   command_buffer.Setup(&bt);
-//  left_encoder.Setup(LEFT_ENCODER_A, LEFT_ENCODER_B);
-  right_encoder.Setup(RIGHT_ENCODER_A, RIGHT_ENCODER_B);
 
-  motor_driver.Setup(
-      LEFT_MOTOR_A, LEFT_MOTOR_B, LEFT_MOTOR_EN,
-      RIGHT_MOTOR_A, RIGHT_MOTOR_B, RIGHT_MOTOR_EN);
+  right_encoder.Setup();
+
+  motor_driver.Setup();
   motor_driver.SetupTimer1();
-
 
   config_version = config.version;
 
   config.Setup();
   component_manager.RegisterComponent(&config);
+
   gyro.Setup();
   component_manager.RegisterComponent(&gyro);
+
   accel.Setup(&gyro);
   component_manager.RegisterComponent(&accel);
-//  position.Setup(&left_encoder, &right_encoder);
+
   position.Setup(&right_encoder);
   component_manager.RegisterComponent(&position);
+
   sensor_fusion.Setup(&gyro, &accel);
   component_manager.RegisterComponent(&sensor_fusion);
+
   fall_detector.Setup(&sensor_fusion);
   component_manager.RegisterComponent(&fall_detector);
-  velocity_controller.Setup(&velocity_to_angle, &position);
+
+  velocity_controller.Setup(&position);
   component_manager.RegisterComponent(&velocity_controller);
-  tilt_controller.Setup(&sensor_fusion, &angle_to_power, &velocity_controller);
+
+  tilt_controller.Setup(&sensor_fusion, &velocity_controller);
   component_manager.RegisterComponent(&tilt_controller);
+
   calibration.Setup(&accel, &gyro, &sensor_fusion, &motor_driver);
   component_manager.RegisterComponent(&calibration);
+
   motor_controller.Setup(
       &motor_driver, &tilt_controller, &fall_detector, &calibration);
   component_manager.RegisterComponent(&motor_controller);

@@ -2,17 +2,14 @@
 
 #include "command_buffer.h"
 #include "config.h"
-#include "pid_controller.h"
 #include "position.h"
 
-void VelocityController::Setup(
-    PidController* velocity_to_angle, Position* position) {
-  velocity_to_angle_ = velocity_to_angle;
+void VelocityController::Setup(Position* position) {
   position_ = position;
   position_version_ = position_->version;
   last_sample_time_ = position_->sample_time;
   version = 0;
-  velocity_to_angle_->SetSetpoint(0.0);
+  velocity_to_angle_.SetSetpoint(0.0);
 }
 
 void VelocityController::Update() {
@@ -25,9 +22,9 @@ void VelocityController::Update() {
   //   set_velocity = 30.0;
   // else if(ir_->command == IR::Back)
   //   set_velocity = -30.0;
-  velocity_to_angle_->SetSetpoint(set_velocity);
-  velocity_to_angle_->CalcOutput(position_->velocity, 0, ElapsedTime(last_sample_time_, now));
-  angle_offset = constrain(velocity_to_angle_->output, -5.0, 5.0);
+  velocity_to_angle_.SetSetpoint(set_velocity);
+  velocity_to_angle_.CalcOutput(position_->velocity, 0, ElapsedTime(last_sample_time_, now));
+  angle_offset = constrain(velocity_to_angle_.output, -5.0, 5.0);
   last_sample_time_ = now;
   ++version;
 }
@@ -36,8 +33,8 @@ bool VelocityController::HandleCommand(CommandBuffer& cb) {
   if (strcmp_P(cb.command, PSTR("RdVelCtrl")) == 0) {
     cb.BeginResponse();
     cb.WriteValue(angle_offset);
-    cb.WriteValue(velocity_to_angle_->ie);
-    cb.WriteValue(velocity_to_angle_->setpoint);
+    cb.WriteValue(velocity_to_angle_.ie);
+    cb.WriteValue(velocity_to_angle_.setpoint);
     cb.EndResponse();
     return true;
   }
@@ -50,5 +47,5 @@ void VelocityController::ReadConfig(Config* config) {
   double kd = config->ReadFloat_P(kVelCtrl_KD);
   double lambda = config->ReadFloat_P(kVelCtrl_KL);
 
-  velocity_to_angle_->SetCoefficients(kp, ki, kd, lambda);
+  velocity_to_angle_.SetCoefficients(kp, ki, kd, lambda);
 }

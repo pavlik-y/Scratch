@@ -5,6 +5,7 @@
 
 #include "common.h"
 #include "component.h"
+#include "pid_controller.h"
 
 class Config;
 class CommandBuffer;
@@ -15,7 +16,7 @@ class VelocityController;
 class TiltController : public Component {
 public:
   void Setup(
-      SensorFusion* sensor_fusion, PidController* angle_to_power,
+      SensorFusion* sensor_fusion,
       VelocityController* velocity_controller);
   void UpdatePidControllers();
   void Update() override;
@@ -30,7 +31,7 @@ private:
   Version sensor_fusion_version_;
   VelocityController* velocity_controller_;
   Version velocity_controller_version_;
-  PidController* angle_to_power_;
+  PidController angle_to_power_;
   unsigned long last_micros_;
   double upright_angle_;
 };

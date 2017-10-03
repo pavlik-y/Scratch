@@ -2,7 +2,7 @@
 
 #include "command_buffer.h"
 #include "config.h"
-#include "motor.h"
+#include "motor_encoder.h"
 
 //static const double kPosFactor = 0.015625;
 static const double kPosFactor = 0.015625 * 2.0;

@@ -5,15 +5,15 @@
 
 #include "common.h"
 #include "component.h"
+#include "pid_controller.h"
 
 class CommandBuffer;
 class Config;
-class PidController;
 class Position;
 
 class VelocityController : public Component {
 public:
-  void Setup(PidController* velocity_to_angle, Position* position);
+  void Setup(Position* position);
   void Update() override;
   bool HandleCommand(CommandBuffer& cb) override;
   void ReadConfig(Config* config) override;
@@ -23,7 +23,7 @@ public:
 private:
   Position* position_;
   Version position_version_;
-  PidController* velocity_to_angle_;
+  PidController velocity_to_angle_;
   unsigned long last_sample_time_;
 };
 
