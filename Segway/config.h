@@ -2,7 +2,6 @@
 #define CONFIG_H_
 
 #include <Arduino.h>
-#include <EEPROM.h>
 
 #include "common.h"
 #include "component.h"

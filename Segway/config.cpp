@@ -46,8 +46,9 @@ float Config::ReadFloat(int i) {
     halt(200);
   float value;
   byte* ptr = (byte*)&value;
-  for (int j = 0; j < sizeof(float); ++j)
-    ptr[j] = EEPROM.read(i * sizeof(float) + j);
+  // {PAV} Restore.
+  // for (int j = 0; j < sizeof(float); ++j)
+  //   ptr[j] = EEPROM.read(i * sizeof(float) + j);
   return value;
 }
 
@@ -61,8 +62,9 @@ void Config::WriteFloat(int i, double value) {
   if (i == -1)
     halt(200);
   byte* ptr = (byte*)&value;
-  for (int j = 0; j < sizeof(float); ++j)
-    EEPROM.write(i *  sizeof(float) + j, ptr[j]);
+  // {PAV} Restore.
+  // for (int j = 0; j < sizeof(float); ++j)
+  //   EEPROM.write(i *  sizeof(float) + j, ptr[j]);
 }
 
 int Config::CalcHash() {

@@ -29,7 +29,7 @@ public:
 private:
   void ReadSample();
 
-  static const double factor_ = 57.2957795131; // (1 / pi) * 180
+  static constexpr double factor_ = 57.2957795131; // (1 / pi) * 180
 
   I2CDevice device_;
   short xBias_;

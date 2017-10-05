@@ -31,7 +31,7 @@ class Gyro : public Component {
 
   I2CDevice device_;
   // Reflects sensor scale. Multiply reading by this value to get deg/sec
-  static const double factor_ = 8.75 / 1000.0;
+  static constexpr double factor_ = 8.75 / 1000.0;
   double bias_;
   short raw_rate_;
 };

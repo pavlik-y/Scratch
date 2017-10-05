@@ -34,14 +34,14 @@ void MotorDriver::SetupTimer1() {
   // with ICR1 as TOP using Timer1
 
   // Set PWM Phase and Frequency Correct with ICR1 as TOP and no prescaling.
-  TCCR1B = (1 << WGM13) | (1 << CS10);
+  // TCCR1B = (1 << WGM13) | (1 << CS10);
   // ICR1 is the TOP value - this is set so the frequency is equal to 20kHz.
-  ICR1 = PWMVALUE;
+  // ICR1 = PWMVALUE;
 
   /* Enable PWM on pin 18 (OC1A) & pin 17 (OC1B) */
   // Clear OC1A/OC1B on compare match when up-counting
   // Set OC1A/OC1B on compare match when down-counting
-  TCCR1A = (1 << COM1A1) | (1 << COM1B1);
+  // TCCR1A = (1 << COM1A1) | (1 << COM1B1);
 }
 
 void MotorDriver::SetPower(int left_dir, double left_power,
@@ -56,7 +56,7 @@ void MotorDriver::SetPower(int left_dir, double left_power,
     digitalWrite(left_B_, HIGH);
   }
   duty_cycle = left_power * double(PWMVALUE);
-  OCR1A = duty_cycle;
+  // OCR1A = duty_cycle;
 
   if (right_dir < 0) {
     digitalWrite(right_A_, HIGH);
@@ -66,5 +66,5 @@ void MotorDriver::SetPower(int left_dir, double left_power,
     digitalWrite(right_B_, HIGH);
   }
   duty_cycle = right_power * double(PWMVALUE);
-  OCR1B = duty_cycle;
+  // OCR1B = duty_cycle;
 }

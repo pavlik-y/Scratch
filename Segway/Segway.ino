@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <EEPROM.h>
 #include <SoftwareSerial.h>
 #include <Wire.h>
 
@@ -19,25 +18,25 @@
 #include "velocity_controller.h"
 
 // Pins
-const int LEFT_MOTOR_A = 6;
-const int LEFT_MOTOR_B = 7;
-const int LEFT_MOTOR_EN = 9;
-const int RIGHT_MOTOR_A = 8;
-const int RIGHT_MOTOR_B = 11;
-const int RIGHT_MOTOR_EN = 10;
-const int RIGHT_ENCODER_A = 2;
-const int RIGHT_ENCODER_B = 4;
+// const int LEFT_MOTOR_A = 6;
+// const int LEFT_MOTOR_B = 7;
+// const int LEFT_MOTOR_EN = 9;
+// const int RIGHT_MOTOR_A = 8;
+// const int RIGHT_MOTOR_B = 11;
+// const int RIGHT_MOTOR_EN = 10;
+// const int RIGHT_ENCODER_A = 2;
+// const int RIGHT_ENCODER_B = 4;
 //const int LEFT_ENCODER_A = 3;
 //const int LEFT_ENCODER_B = 5;
-const int BLUETOOTH_RX = 12;
-const int BLUETOOTH_TX = 13;
+// const int BLUETOOTH_RX = 12;
+// const int BLUETOOTH_TX = 13;
 
 
 //MotorEncoder left_encoder;
-MotorEncoder right_encoder(RIGHT_ENCODER_A, RIGHT_ENCODER_B);
-MotorDriver motor_driver(LEFT_MOTOR_A, LEFT_MOTOR_B, LEFT_MOTOR_EN,
-                         RIGHT_MOTOR_A, RIGHT_MOTOR_B, RIGHT_MOTOR_EN);
-SoftwareSerial bt(BLUETOOTH_RX, BLUETOOTH_TX);
+// // MotorEncoder right_encoder(RIGHT_ENCODER_A, RIGHT_ENCODER_B);
+// // MotorDriver motor_driver(LEFT_MOTOR_A, LEFT_MOTOR_B, LEFT_MOTOR_EN,
+// //                          RIGHT_MOTOR_A, RIGHT_MOTOR_B, RIGHT_MOTOR_EN);
+// SoftwareSerial bt(BLUETOOTH_RX, BLUETOOTH_TX);
 CommandBuffer command_buffer;
 
 ComponentManager component_manager(15);
@@ -61,29 +60,30 @@ PidController angle_to_power;
 //  left_encoder.Read();
 //}
 
-void ReadRightEncoder() {
-  right_encoder.Read();
-}
+// void ReadRightEncoder() {
+//   right_encoder.Read();
+// }
 
 void SetupInterrupts() {
-  attachInterrupt(0, ReadRightEncoder, CHANGE);
+  // attachInterrupt(0, ReadRightEncoder, CHANGE);
 //  attachInterrupt(1, ReadLeftEncoder, CHANGE);
 }
 
 void setup() {
   Wire.begin();
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println("Restart");
 
-  bt.begin(9600);
-  bt.listen();
+  // bt.begin(9600);
+  // bt.listen();
 
-  command_buffer.Setup(&bt);
+  // {PAV} pass valid BLE.
+  // command_buffer.Setup(&bt);
 
-  right_encoder.Setup();
+  // right_encoder.Setup();
 
-  motor_driver.Setup();
-  motor_driver.SetupTimer1();
+  // motor_driver.Setup();
+  // motor_driver.SetupTimer1();
 
   config_version = config.version;
 
@@ -96,8 +96,8 @@ void setup() {
   accel.Setup(&gyro);
   component_manager.RegisterComponent(&accel);
 
-  position.Setup(&right_encoder);
-  component_manager.RegisterComponent(&position);
+  // position.Setup(&right_encoder);
+  // component_manager.RegisterComponent(&position);
 
   sensor_fusion.Setup(&gyro, &accel);
   component_manager.RegisterComponent(&sensor_fusion);
@@ -111,12 +111,12 @@ void setup() {
   tilt_controller.Setup(&sensor_fusion, &velocity_controller);
   component_manager.RegisterComponent(&tilt_controller);
 
-  calibration.Setup(&accel, &gyro, &sensor_fusion, &motor_driver);
-  component_manager.RegisterComponent(&calibration);
+  // calibration.Setup(&accel, &gyro, &sensor_fusion, &motor_driver);
+  // component_manager.RegisterComponent(&calibration);
 
-  motor_controller.Setup(
-      &motor_driver, &tilt_controller, &fall_detector, &calibration);
-  component_manager.RegisterComponent(&motor_controller);
+  // motor_controller.Setup(
+  //     &motor_driver, &tilt_controller, &fall_detector, &calibration);
+  // component_manager.RegisterComponent(&motor_controller);
 
 //  diag.Setup(&sensor_fusion, &balancer);
 //  component_manager.RegisterComponent(&diag);

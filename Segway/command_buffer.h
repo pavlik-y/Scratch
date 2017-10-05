@@ -2,11 +2,11 @@
 #define COMMAND_BUFFER_H_
 
 #include <Arduino.h>
-#include <SoftwareSerial.h>
+#include <Stream.h>
 
 class CommandBuffer {
 public:
-  void Setup(SoftwareSerial* bt);
+  void Setup(Stream* bt);
   bool ReadCommand();
   const char* GetStringParam(int index) const;
   int GetIntParam(int index) const;
@@ -26,7 +26,7 @@ private:
 
   void ProcessInput(char* buffer);
 
-  SoftwareSerial* bt_;
+  Stream* bt_;
 
   char buffer_[64];
 

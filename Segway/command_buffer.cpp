@@ -1,6 +1,6 @@
 #include "command_buffer.h"
 
-void CommandBuffer::Setup(SoftwareSerial* bt) {
+void CommandBuffer::Setup(Stream* bt) {
   bt_ = bt;
   index_ = 0;
 }
