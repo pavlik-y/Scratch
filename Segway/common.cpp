@@ -2,13 +2,18 @@
 
 #include <Arduino.h>
 
+void halt(const char* msg) {
+  Serial.println(msg);
+  halt(500);
+}
+
 void halt(int pulseTime) {
   for (int i = 0; i < 13; i++)
     digitalWrite(i, LOW);
   while(true) {
-    digitalWrite(13, HIGH);
+    digitalWrite(LED_BUILTIN, HIGH);
     delay(pulseTime);
-    digitalWrite(13, LOW);
+    digitalWrite(LED_BUILTIN, LOW);
     delay(pulseTime);
   }
 }

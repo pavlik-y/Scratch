@@ -9,7 +9,7 @@ Gyro::Gyro()
 void Gyro::Setup() {
   byte whoAmI = device_.ReadByteRegister(0xf);
   if (whoAmI != B11010011)
-    halt(2000);
+    halt("Gyro not detected");
 
   // Three lowest bits of control register are enabling x,y and z
   // respectively.

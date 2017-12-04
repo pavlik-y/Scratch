@@ -1,13 +1,13 @@
 #include "command_buffer.h"
 
-void CommandBuffer::Setup(Stream* bt) {
-  bt_ = bt;
+void CommandBuffer::Setup(Stream* stream) {
+  stream_ = stream;
   index_ = 0;
 }
 
 bool CommandBuffer::ReadCommand() {
-  while(bt_->available()) {
-    buffer_[index_] = (char) bt_->read();
+  while(stream_->available()) {
+    buffer_[index_] = (char) stream_->read();
     if (buffer_[index_] == '\r')
       continue;
     if (buffer_[index_] == '\n') {
@@ -44,45 +44,20 @@ float CommandBuffer::GetFloatParam(int index) const {
 }
 
 void CommandBuffer::BeginResponse() {
-  bt_->print("RSP:");
+  stream_->print("RSP:");
   first_column_ = true;
 }
 
-void CommandBuffer::WriteValue(int value) {
-  if (!first_column_)
-    bt_->print(",");
-  bt_->print(value);
-  first_column_ = false;
-}
 
-void CommandBuffer::WriteValue(long value) {
-  if (!first_column_)
-    bt_->print(",");
-  bt_->print(value);
-  first_column_ = false;
-}
-
+template <>
 void CommandBuffer::WriteValue(double value) {
-  if (!first_column_)
-    bt_->print(",");
-  bt_->print(value, 4);
-  first_column_ = false;
-}
-
-void CommandBuffer::WriteValue(const String& value) {
-  if (!first_column_)
-    bt_->print(",");
-  bt_->print(value);
-  first_column_ = false;
-}
-
-void CommandBuffer::WriteValue(const char* value) {
-  if (!first_column_)
-    bt_->print(",");
-  bt_->print(value);
+  stream_->printf("%s%.4f", first_column_? "": ",", value);
+  // if (!first_column_)
+  //   stream_->print(",");
+  // stream_->print(value, 4);
   first_column_ = false;
 }
 
 void CommandBuffer::EndResponse() {
-  bt_->println();
+  stream_->println();
 }

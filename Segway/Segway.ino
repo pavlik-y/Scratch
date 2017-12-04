@@ -1,4 +1,6 @@
 #include <Arduino.h>
+#include <bluefruit.h>
+#include <Nffs.h>
 #include <SoftwareSerial.h>
 #include <Wire.h>
 
@@ -7,6 +9,7 @@
 #include "command_buffer.h"
 #include "component_manager.h"
 #include "config.h"
+#include "diag.h"
 #include "fall_detector.h"
 #include "gyro.h"
 #include "motor.h"
@@ -46,6 +49,8 @@ Version config_version;
 Accel accel;
 Calibration calibration;
 Config config;
+ConfigStore config_store;
+Diag diag;
 FallDetector fall_detector;
 Gyro gyro;
 MotorController motor_controller;
@@ -74,42 +79,50 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Restart");
 
+  Bluefruit.begin();
+  Nffs.begin();
+
   // bt.begin(9600);
   // bt.listen();
 
   // {PAV} pass valid BLE.
-  // command_buffer.Setup(&bt);
+  command_buffer.Setup(&Serial);
 
   // right_encoder.Setup();
 
   // motor_driver.Setup();
   // motor_driver.SetupTimer1();
 
+  config_store.Setup("/Segway.cfg", Config::GetConfigValuesCount());
+
   config_version = config.version;
 
-  config.Setup();
+  config.Setup(&config_store);
   component_manager.RegisterComponent(&config);
 
-  gyro.Setup();
-  component_manager.RegisterComponent(&gyro);
+  // gyro.Setup();
+  // component_manager.RegisterComponent(&gyro);
 
-  accel.Setup(&gyro);
-  component_manager.RegisterComponent(&accel);
+  // accel.Setup(&gyro);
+  // component_manager.RegisterComponent(&accel);
+
+  // diag.Setup(&gyro);
+  // component_manager.RegisterComponent(&diag);
 
   // position.Setup(&right_encoder);
   // component_manager.RegisterComponent(&position);
 
-  sensor_fusion.Setup(&gyro, &accel);
-  component_manager.RegisterComponent(&sensor_fusion);
+  // sensor_fusion.Setup(&gyro, &accel);
+  // component_manager.RegisterComponent(&sensor_fusion);
 
-  fall_detector.Setup(&sensor_fusion);
-  component_manager.RegisterComponent(&fall_detector);
+  // fall_detector.Setup(&sensor_fusion);
+  // component_manager.RegisterComponent(&fall_detector);
 
-  velocity_controller.Setup(&position);
-  component_manager.RegisterComponent(&velocity_controller);
+  // velocity_controller.Setup(&position);
+  // component_manager.RegisterComponent(&velocity_controller);
 
-  tilt_controller.Setup(&sensor_fusion, &velocity_controller);
-  component_manager.RegisterComponent(&tilt_controller);
+  // tilt_controller.Setup(&sensor_fusion, &velocity_controller);
+  // component_manager.RegisterComponent(&tilt_controller);
 
   // calibration.Setup(&accel, &gyro, &sensor_fusion, &motor_driver);
   // component_manager.RegisterComponent(&calibration);
@@ -118,8 +131,8 @@ void setup() {
   //     &motor_driver, &tilt_controller, &fall_detector, &calibration);
   // component_manager.RegisterComponent(&motor_controller);
 
-//  diag.Setup(&sensor_fusion, &balancer);
-//  component_manager.RegisterComponent(&diag);
+  // diag.Setup(&sensor_fusion, &balancer);
+  // component_manager.RegisterComponent(&diag);
 
   SetupInterrupts();
 }

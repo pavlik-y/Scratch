@@ -12,7 +12,7 @@ Accel::Accel()
 void Accel::Setup(Gyro* gyro) {
   byte devId = device_.ReadByteRegister(0x0);
   if (devId != B11100101)
-    halt(1000);
+    halt("Accel not detected");
   device_.WriteRegister(0x2D, B00001000);
   device_.WriteRegister(0x31, B00001011);
 
