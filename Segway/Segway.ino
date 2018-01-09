@@ -74,14 +74,26 @@ void SetupInterrupts() {
 //  attachInterrupt(1, ReadLeftEncoder, CHANGE);
 }
 
+void ResetI2C() {
+  if(digitalRead(PIN_WIRE_SCL) == HIGH && digitalRead(PIN_WIRE_SDA) == LOW) {
+      Serial.println("Reset I2C");
+      pinMode(15, OUTPUT);      // is connected to SCL
+      digitalWrite(15, LOW);
+      delay(2000);              //maybe too long
+      pinMode(15, INPUT);       // reset pin
+      delay(50);
+  }
+}
 void setup() {
   Wire.begin();
+  // Wire.setClock(400000);
   Serial.begin(9600);
   Serial.println("Restart");
 
   Bluefruit.begin();
   Nffs.begin();
 
+  ResetI2C();
   // bt.begin(9600);
   // bt.listen();
 
@@ -100,14 +112,17 @@ void setup() {
   config.Setup(&config_store);
   component_manager.RegisterComponent(&config);
 
-  // gyro.Setup();
-  // component_manager.RegisterComponent(&gyro);
+  Serial.println("Before gyro setup");
+  gyro.Setup();
+  component_manager.RegisterComponent(&gyro);
 
   // accel.Setup(&gyro);
   // component_manager.RegisterComponent(&accel);
 
-  // diag.Setup(&gyro);
-  // component_manager.RegisterComponent(&diag);
+  Serial.println("Before diag setup");
+  diag.Setup(&gyro);
+  component_manager.RegisterComponent(&diag);
+  Serial.println("After diag setup");
 
   // position.Setup(&right_encoder);
   // component_manager.RegisterComponent(&position);

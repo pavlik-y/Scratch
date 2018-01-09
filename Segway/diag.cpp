@@ -13,6 +13,7 @@ Diag::Diag()
       last_sample_time_(0) {}
 
 void Diag::Setup(Gyro* gyro) {
+  Serial.println("Diag::Setup");
   gyro_ = gyro;
 }
 

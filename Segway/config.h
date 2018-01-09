@@ -11,7 +11,7 @@ class CommandBuffer;
 
 #define CONFIG_VALUES(F) \
   F(kConfigVersion, "FormatVersion", 2.0) \
-  F(kGyro_Bias, "Gyro.Bias", 0) \
+  F(kGyro_Bias, "Gyro.Bias", -95) \
   F(kAccel_BiasX, "Accel.BiasX", 0) \
   F(kAccel_BiasZ, "Accel.BiasZ", 0) \
   F(kSF_Lambda, "SF.Lambda", 0) \

@@ -7,13 +7,19 @@ Gyro::Gyro()
     : device_(0x69) {}
 
 void Gyro::Setup() {
+  Serial.println("Before read register");
   byte whoAmI = device_.ReadByteRegister(0xf);
-  if (whoAmI != B11010011)
+  Serial.println("Before device check");
+  if (whoAmI != B11010011) {
+    Serial.println(whoAmI);
     halt("Gyro not detected");
+  }
+  Serial.println("After device check");
 
   // Three lowest bits of control register are enabling x,y and z
   // respectively.
   device_.WriteRegister(0x20, B00001010);
+  Serial.println("After WriteRegister check");
 
   version = 0;
 }
