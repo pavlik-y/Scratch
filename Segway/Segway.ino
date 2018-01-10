@@ -16,6 +16,7 @@
 #include "motor_controller.h"
 #include "motor_encoder.h"
 #include "position.h"
+#include "sensor_chip.h"
 #include "sensor_fusion.h"
 #include "tilt_controller.h"
 #include "velocity_controller.h"
@@ -33,6 +34,7 @@
 //const int LEFT_ENCODER_B = 5;
 // const int BLUETOOTH_RX = 12;
 // const int BLUETOOTH_TX = 13;
+const int GYRO_DATA_READY_PIN = 15;
 
 
 //MotorEncoder left_encoder;
@@ -40,6 +42,9 @@
 // // MotorDriver motor_driver(LEFT_MOTOR_A, LEFT_MOTOR_B, LEFT_MOTOR_EN,
 // //                          RIGHT_MOTOR_A, RIGHT_MOTOR_B, RIGHT_MOTOR_EN);
 // SoftwareSerial bt(BLUETOOTH_RX, BLUETOOTH_TX);
+
+SensorChip sensors(GYRO_DATA_READY_PIN);
+
 CommandBuffer command_buffer;
 
 ComponentManager component_manager(15);
@@ -74,26 +79,19 @@ void SetupInterrupts() {
 //  attachInterrupt(1, ReadLeftEncoder, CHANGE);
 }
 
-void ResetI2C() {
-  if(digitalRead(PIN_WIRE_SCL) == HIGH && digitalRead(PIN_WIRE_SDA) == LOW) {
-      Serial.println("Reset I2C");
-      pinMode(15, OUTPUT);      // is connected to SCL
-      digitalWrite(15, LOW);
-      delay(2000);              //maybe too long
-      pinMode(15, INPUT);       // reset pin
-      delay(50);
-  }
-}
 void setup() {
+  pinMode(15, INPUT);
+
   Wire.begin();
-  // Wire.setClock(400000);
+  Wire.setClock(400000);
   Serial.begin(9600);
   Serial.println("Restart");
 
   Bluefruit.begin();
   Nffs.begin();
 
-  ResetI2C();
+  sensors.Setup();
+
   // bt.begin(9600);
   // bt.listen();
 
@@ -113,7 +111,7 @@ void setup() {
   component_manager.RegisterComponent(&config);
 
   Serial.println("Before gyro setup");
-  gyro.Setup();
+  gyro.Setup(&sensors);
   component_manager.RegisterComponent(&gyro);
 
   // accel.Setup(&gyro);
