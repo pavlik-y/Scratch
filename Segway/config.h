@@ -9,10 +9,14 @@
 
 class CommandBuffer;
 
+//  F(kGyro_Bias, "Gyro.Bias", 168) \ // 141.72, 168
+//  F(kAccel_BiasX, "Accel.BiasX", 0) -245
+//  F(kAccel_BiasZ, "Accel.BiasZ", -800) \
+
 #define CONFIG_VALUES(F) \
   F(kConfigVersion, "FormatVersion", 2.0) \
-  F(kGyro_Bias, "Gyro.Bias", -95) \
-  F(kAccel_BiasX, "Accel.BiasX", 0) \
+  F(kGyro_Bias, "Gyro.Bias", 168) \
+  F(kAccel_BiasX, "Accel.BiasX", -245) \
   F(kAccel_BiasZ, "Accel.BiasZ", 0) \
   F(kSF_Lambda, "SF.Lambda", 0) \
   F(kBal_UprightAngle, "Bal.UprightAngle", 0) \

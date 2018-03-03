@@ -28,18 +28,15 @@ void Gyro::ReadSample() {
   int16_t y;
   int16_t z;
   sensors_->ReadGyroData(&x, &y, &z);
-  raw_rate_ = -y;
-  rate = (double(raw_rate_) - bias_) * sensors_->kGyroFactor;
-  ++sample_count;
-  raw_angle += (long)raw_rate_;
+  raw_rate = y;
+  rate = (double(raw_rate) - bias_) * sensors_->kGyroFactor;
 }
 
 bool Gyro::HandleCommand(CommandBuffer& cb) {
   if (strcmp_P(cb.command, PSTR("RdGyro")) == 0) {
     cb.BeginResponse();
+    cb.WriteValue(raw_rate);
     cb.WriteValue(rate);
-    cb.WriteValue(raw_angle);
-    cb.WriteValue(sample_count);
     cb.WriteValue(bias_);
     cb.EndResponse();
     return true;

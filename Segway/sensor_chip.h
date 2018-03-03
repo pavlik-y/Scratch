@@ -16,7 +16,7 @@ class SensorChip {
   void ReadGyroData(int16_t* x, int16_t* y, int16_t* z);
 
   // Reflects sensor scale. Multiply reading by this value to get deg/sec
-  static constexpr double kGyroFactor = 17.5 / 1000.0;
+  static constexpr double kGyroFactor = 8.75 / 1000.0;
 
  private:
   I2CDevice accel_gyro_;

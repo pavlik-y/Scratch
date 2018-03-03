@@ -13,14 +13,14 @@ void SensorChip::Setup() {
 
   // CTRL_REG1_G
   // ODR_G = 119 Hz
-  // FS_G = 500 dps
-  accel_gyro_.WriteRegister(0x10, 0b01101000);
+  // FS_G = 245 dps
+  accel_gyro_.WriteRegister(0x10, 0b01100000);
 
   // INT1_CTRL : INT_DRDY_G
   accel_gyro_.WriteRegister(0x0C, 0b00000010);
 
   // FIFO_CTRL
-  accel_gyro_.WriteRegister(0x2e, 0b00100000);
+  // accel_gyro_.WriteRegister(0x2e, 0b00100000);
   Serial.println("Sensors set up");
 }
 

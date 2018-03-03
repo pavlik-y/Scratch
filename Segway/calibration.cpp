@@ -1,3 +1,4 @@
+#if 0
 #include "calibration.h"
 
 #include "accel.h"
@@ -78,3 +79,4 @@ bool Calibration::HandleCommand(CommandBuffer& cb) {
   }
   return false;
 }
+#endif

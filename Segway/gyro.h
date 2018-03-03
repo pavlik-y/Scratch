@@ -20,8 +20,7 @@ class Gyro : public Component {
 
   Version version;
   double rate;
-  long raw_angle;
-  long sample_count;
+  int16_t raw_rate;
 
  private:
   // Reads rotation rate around y axis from gyro. Output is in deg/sec.
@@ -30,7 +29,6 @@ class Gyro : public Component {
   SensorChip* sensors_;
 
   double bias_;
-  short raw_rate_;
 };
 
 #endif  // GYRO_H_

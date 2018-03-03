@@ -5,7 +5,6 @@
 #include <Wire.h>
 
 #include "accel.h"
-#include "calibration.h"
 #include "command_buffer.h"
 #include "component_manager.h"
 #include "config.h"
@@ -52,7 +51,6 @@ ComponentManager component_manager(15);
 Version config_version;
 
 Accel accel;
-Calibration calibration;
 Config config;
 ConfigStore config_store;
 Diag diag;
@@ -84,7 +82,7 @@ void setup() {
 
   Wire.begin();
   Wire.setClock(400000);
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Restart");
 
   Bluefruit.begin();
@@ -114,11 +112,11 @@ void setup() {
   gyro.Setup(&sensors);
   component_manager.RegisterComponent(&gyro);
 
-  // accel.Setup(&gyro);
-  // component_manager.RegisterComponent(&accel);
+  accel.Setup(&sensors, &gyro);
+  component_manager.RegisterComponent(&accel);
 
   Serial.println("Before diag setup");
-  diag.Setup(&gyro);
+  diag.Setup(&gyro, &accel);
   component_manager.RegisterComponent(&diag);
   Serial.println("After diag setup");
 

@@ -9,20 +9,21 @@
 class CommandBuffer;
 class Config;
 class Gyro;
+class SensorChip;
 
-// ADXL345: http://www.analog.com/static/imported-files/data_sheets/ADXL345.pdf
 class Accel : public Component {
 public:
   Accel();
 
-  void Setup(Gyro* gyro);
+  void Setup(SensorChip* sensors, Gyro* gyro);
 
   void Update() override;
   void ReadConfig(Config* config) override;
   bool HandleCommand(CommandBuffer& cb) override;
 
-  short x;
-  short z;
+  int16_t x;
+  int16_t y;
+  int16_t z;
   double angle;
   Version version;
 
@@ -31,10 +32,10 @@ private:
 
   static constexpr double factor_ = 57.2957795131; // (1 / pi) * 180
 
-  I2CDevice device_;
   short xBias_;
   short zBias_;
 
+  SensorChip* sensors_;
   Gyro* gyro_;
   Version gyro_version_;
 };
