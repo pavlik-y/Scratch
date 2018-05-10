@@ -12,6 +12,7 @@ class Gyro : public Component {
  public:
   Gyro();
   void Setup(SensorChip* sensors);
+
   void Update() override;
   bool HandleCommand(CommandBuffer& cb) override;
   void ReadConfig(Config* config) override;

@@ -1,55 +1,53 @@
 #include "position.h"
 
+#include <SwRotaryEncoder.h>
+
 #include "command_buffer.h"
+#include "common.h"
 #include "config.h"
-#include "motor_encoder.h"
 
 //static const double kPosFactor = 0.015625;
-static const double kPosFactor = 0.015625 * 2.0;
+static const double kPosFactor = 0.015625;
 
-void Position::Setup(MotorEncoder* right_encoder) {
+void Position::Setup(SwRotaryEncoder* right_encoder) {
   right_encoder_ = right_encoder;
-  sample_time = 0;
+  last_sample_time_micros = micros();
   version = 0;
   pos = 0;
-  last_pos_ = 0;
-  velocity = 0;
-  avg_velocity = 0;
-  lambda_ = 0;
-  dump_ = false;
+  // last_pos_ = 0;
+  // velocity = 0;
+  // avg_velocity = 0;
+  // lambda_ = 0;
+  last_sample_time_micros = micros();
 }
 
 void Position::ReadConfig(Config* config) {
-  lambda_ = config->ReadFloat_P(kPos_Lambda);
-  sample_interval_ = config->ReadFloat_P(kPos_SampleInterval);
+  // lambda_ = config->ReadFloat_P(kPos_Lambda);
+  sample_interval_micros_ =
+      (unsigned long)config->ReadFloat_P(kPos_SampleInterval);
 }
 
 void Position::Update() {
-  unsigned long now = millis();
-  if (ElapsedTime(sample_time, now) < sample_interval_)
+  unsigned long now = micros();
+  if (now - last_sample_time_micros < sample_interval_micros_)
     return;
-//    pos = double(left_encoder_->pos + right_encoder_->pos) * kPosFactor;
-  pos = double(right_encoder_->pos) * kPosFactor;
-  velocity = (pos - last_pos_) / (double (now - sample_time) * 0.001);
-  avg_velocity = LowPassFilter(avg_velocity, velocity, lambda_);
-  if (dump_) {
-    Serial.print(pos);
-    Serial.print(",");
-    Serial.print(velocity);
-    Serial.print(",");
-    Serial.println(avg_velocity);
-  }
-  last_pos_ = pos;
-  sample_time = now;
+  encoder_pos = right_encoder_->readAbs();
+  pos = double(encoder_pos) * kPosFactor;
+
+  last_sample_time_micros = now;
   ++version;
+
+  // velocity = (pos - last_pos_) / (double (now - sample_time) * 0.001);
+  // avg_velocity = LowPassFilter(avg_velocity, velocity, lambda_);
+  // last_pos_ = pos;
 }
 
 bool Position::HandleCommand(CommandBuffer& cb) {
   if (strcmp_P(cb.command, PSTR("RdPos")) == 0) {
     cb.BeginResponse();
     cb.WriteValue(pos);
-    cb.WriteValue(velocity);
-    cb.WriteValue(avg_velocity);
+    // cb.WriteValue(velocity);
+    // cb.WriteValue(avg_velocity);
     cb.EndResponse();
     return true;
   }

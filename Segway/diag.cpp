@@ -3,40 +3,56 @@
 #include "command_buffer.h"
 #include "accel.h"
 #include "gyro.h"
+#include "position.h"
+#include "sensor_chip.h"
+#include "sensor_fusion.h"
 
-namespace {
+Diag::Diag() {
+  last_sample_time_micros_ = micros();
+}
 
-static constexpr int kSampleInterval = 3000;
-
-}  // namespace
-
-Diag::Diag()
-    : last_sample_time_(0) {}
-
-void Diag::Setup(Gyro* gyro, Accel* accel) {
+void Diag::Setup(Gyro* gyro, Accel* accel, SensorFusion* sensor_fusion,
+    Position* position) {
   accel_ = accel;
   gyro_ = gyro;
   gyro_version_ = gyro_->version;
+  sensor_fusion_ = sensor_fusion;
+  position_ = position;
 }
 
 void Diag::Update() {
-  // unsigned long now = millis();
-  // if (now - last_sample_time_ < kSampleInterval)
-  //   return;
-  // last_sample_time_ = now;
   if (!enabled_ || gyro_version_ == gyro_->version)
     return;
   gyro_version_ = gyro_->version;
-  gyro_angle_ += gyro_->rate;
-  Serial.printf("%f,%f,0\n", accel_->angle, gyro_angle_);
+  unsigned long now = micros();
+  double dt = double(now - last_sample_time_micros_) / 1000000.0;
+  last_sample_time_micros_ = now;
+  gyro_angle_ += gyro_->rate * dt;
+
+  if (sample_count++ % 5 == 0) {
+    // Accel
+    // Serial.printf("%f,%f,0\n", accel_->angle, gyro_angle_);
+
+    // Gyro
+    // Serial.printf("%d,%d,0\n", accel_->x, accel_->z);
+
+    // SensorFusion
+    // Serial.printf("%f,%f,0\n", accel_->angle,
+    //     sensor_fusion_->complementary_angle);
+
+    // Position
+    Serial.printf("%f,0\n", position_->pos);
+  }
 }
 
 bool Diag::HandleCommand(CommandBuffer& cb) {
   if (strcmp_P(cb.command, PSTR("Diag")) == 0) {
     cb.BeginResponse();
     enabled_ = cb.GetIntParam(0) != 0;
-    if (enabled_)
+    if (enabled_) {
       gyro_angle_ = accel_->angle;
+      last_sample_time_micros_ = micros();
+    }
     cb.WriteValue("Ok");
     cb.EndResponse();
     return true;

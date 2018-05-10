@@ -7,7 +7,7 @@
 void VelocityController::Setup(Position* position) {
   position_ = position;
   position_version_ = position_->version;
-  last_sample_time_ = position_->sample_time;
+  // last_sample_time_ = position_->sample_time;
   version = 0;
   velocity_to_angle_.SetSetpoint(0.0);
 }
@@ -16,17 +16,17 @@ void VelocityController::Update() {
   if (position_version_ == position_->version)
     return;
   position_version_ = position_->version;
-  unsigned long now = position_->sample_time;
+  // unsigned long now = position_->sample_time;
   double set_velocity = 0;
   // if (ir_->command == IR::Forward)
   //   set_velocity = 30.0;
   // else if(ir_->command == IR::Back)
   //   set_velocity = -30.0;
-  velocity_to_angle_.SetSetpoint(set_velocity);
-  velocity_to_angle_.CalcOutput(position_->velocity, 0, ElapsedTime(last_sample_time_, now));
-  angle_offset = constrain(velocity_to_angle_.output, -5.0, 5.0);
-  last_sample_time_ = now;
-  ++version;
+  // velocity_to_angle_.SetSetpoint(set_velocity);
+  // velocity_to_angle_.CalcOutput(position_->velocity, 0, ElapsedTime(last_sample_time_, now));
+  // angle_offset = constrain(velocity_to_angle_.output, -5.0, 5.0);
+  // last_sample_time_ = now;
+  // ++version;
 }
 
 bool VelocityController::HandleCommand(CommandBuffer& cb) {

@@ -8,27 +8,29 @@
 
 class Config;
 class CommandBuffer;
-class MotorEncoder;
+class SwRotaryEncoder;
 
 class Position : public Component {
 public:
-  void Setup(MotorEncoder* right_encoder);
+  void Setup(SwRotaryEncoder* right_encoder);
+
   void ReadConfig(Config* config) override;
   void Update() override;
   bool HandleCommand(CommandBuffer& cb) override;
 
   Version version;
   double pos;
-  double velocity;
-  unsigned long sample_time;
-  double avg_velocity;
+  int32_t encoder_pos;
+  unsigned long last_sample_time_micros;
+  // double velocity;
+  // unsigned long sample_time;
+  // double avg_velocity;
 
 private:
-  MotorEncoder* right_encoder_;
-  double last_pos_;
-  double lambda_;
-  double sample_interval_;
-  bool dump_;
+  SwRotaryEncoder* right_encoder_;
+  // double last_pos_;
+  // double lambda_;
+  unsigned long sample_interval_micros_;
 };
 
 #endif  // POSITION_H_

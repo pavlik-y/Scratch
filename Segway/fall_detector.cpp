@@ -5,9 +5,7 @@
 void FallDetector::Setup(SensorFusion* sensor_fusion) {
   sensor_fusion_ = sensor_fusion;
   sensor_fusion_version_ = sensor_fusion_->version;
-  standing = false;
   start_upright_time_ = millis();
-  version = 0;
 }
 
 void FallDetector::Update() {

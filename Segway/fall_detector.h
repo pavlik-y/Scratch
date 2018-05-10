@@ -13,11 +13,10 @@ public:
   void Setup(SensorFusion* sensor_fusion);
 
   void Update() override;
-
   bool HandleCommand(CommandBuffer& cb) override;
 
-  bool standing;
-  Version version;
+  bool standing = false;
+  Version version = 0;
 
 private:
   SensorFusion* sensor_fusion_;

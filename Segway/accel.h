@@ -22,7 +22,6 @@ public:
   bool HandleCommand(CommandBuffer& cb) override;
 
   int16_t x;
-  int16_t y;
   int16_t z;
   double angle;
   Version version;
@@ -30,7 +29,7 @@ public:
 private:
   void ReadSample();
 
-  static constexpr double factor_ = 57.2957795131; // (1 / pi) * 180
+  static constexpr double kRadToDegFactor = 57.2957795131; // (1 / pi) * 180
 
   short xBias_;
   short zBias_;

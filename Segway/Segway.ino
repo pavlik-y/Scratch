@@ -1,6 +1,11 @@
+// Chip datasheet: http://infocenter.nordicsemi.com/pdf/nRF52832_PS_v1.4.pdf
+// https://www.adafruit.com/product/3406
+// Pinout: https://cdn-learn.adafruit.com/assets/assets/000/046/248/original/microcontrollers_Feather_NRF52_Pinout_v1.2-1.png?1504885794
+
 #include <Arduino.h>
 #include <bluefruit.h>
 #include <Nffs.h>
+#include <SwRotaryEncoder.h>
 #include <SoftwareSerial.h>
 #include <Wire.h>
 
@@ -34,6 +39,8 @@
 // const int BLUETOOTH_RX = 12;
 // const int BLUETOOTH_TX = 13;
 const int GYRO_DATA_READY_PIN = 15;
+const int RIGHT_ENCODER_A = 7;
+const int RIGHT_ENCODER_B = 16;
 
 
 //MotorEncoder left_encoder;
@@ -41,6 +48,7 @@ const int GYRO_DATA_READY_PIN = 15;
 // // MotorDriver motor_driver(LEFT_MOTOR_A, LEFT_MOTOR_B, LEFT_MOTOR_EN,
 // //                          RIGHT_MOTOR_A, RIGHT_MOTOR_B, RIGHT_MOTOR_EN);
 // SoftwareSerial bt(BLUETOOTH_RX, BLUETOOTH_TX);
+SwRotaryEncoder right_encoder;
 
 SensorChip sensors(GYRO_DATA_READY_PIN);
 
@@ -82,11 +90,14 @@ void setup() {
 
   Wire.begin();
   Wire.setClock(400000);
+
   Serial.begin(115200);
   Serial.println("Restart");
 
   Bluefruit.begin();
   Nffs.begin();
+
+  right_encoder.begin(RIGHT_ENCODER_A, RIGHT_ENCODER_B);
 
   sensors.Setup();
 
@@ -95,8 +106,6 @@ void setup() {
 
   // {PAV} pass valid BLE.
   command_buffer.Setup(&Serial);
-
-  // right_encoder.Setup();
 
   // motor_driver.Setup();
   // motor_driver.SetupTimer1();
@@ -115,35 +124,31 @@ void setup() {
   accel.Setup(&sensors, &gyro);
   component_manager.RegisterComponent(&accel);
 
-  Serial.println("Before diag setup");
-  diag.Setup(&gyro, &accel);
+  sensor_fusion.Setup(&gyro, &accel);
+  component_manager.RegisterComponent(&sensor_fusion);
+
+  fall_detector.Setup(&sensor_fusion);
+  component_manager.RegisterComponent(&fall_detector);
+
+  position.Setup(&right_encoder);
+  component_manager.RegisterComponent(&position);
+
+  diag.Setup(&gyro, &accel, &sensor_fusion, &position);
   component_manager.RegisterComponent(&diag);
-  Serial.println("After diag setup");
 
-  // position.Setup(&right_encoder);
-  // component_manager.RegisterComponent(&position);
-
-  // sensor_fusion.Setup(&gyro, &accel);
-  // component_manager.RegisterComponent(&sensor_fusion);
-
-  // fall_detector.Setup(&sensor_fusion);
-  // component_manager.RegisterComponent(&fall_detector);
-
-  // velocity_controller.Setup(&position);
-  // component_manager.RegisterComponent(&velocity_controller);
+  velocity_controller.Setup(&position);
+  component_manager.RegisterComponent(&velocity_controller);
 
   // tilt_controller.Setup(&sensor_fusion, &velocity_controller);
   // component_manager.RegisterComponent(&tilt_controller);
 
+  // {PAV} I don't think I need calibration.
   // calibration.Setup(&accel, &gyro, &sensor_fusion, &motor_driver);
   // component_manager.RegisterComponent(&calibration);
 
   // motor_controller.Setup(
   //     &motor_driver, &tilt_controller, &fall_detector, &calibration);
   // component_manager.RegisterComponent(&motor_controller);
-
-  // diag.Setup(&sensor_fusion, &balancer);
-  // component_manager.RegisterComponent(&diag);
 
   SetupInterrupts();
 }

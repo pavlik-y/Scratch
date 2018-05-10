@@ -20,22 +20,20 @@ public:
   void ReadConfig(Config* config) override;
   bool HandleCommand(CommandBuffer& cb) override;
 
-  void UpdateAngle();
-  void SynchronizeAngles(double angle);
-
-  Version version;
+  Version version = 0;
   double gyro_rate;
-  double gyro_angle;
   double accel_angle;
   double complementary_angle;
-  double avg_accel_angle;
 
 private:
+  void UpdateAngle(unsigned long now);
+
   Gyro* gyro_;
   Version gyro_version_;
   Accel* accel_;
+
   double lambda_;
-  unsigned long last_sample_time_;
+  unsigned long last_sample_time_micros_;
 };
 
 #endif  // SENSOR_FUSION_H_

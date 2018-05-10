@@ -47,8 +47,9 @@ bool Accel::HandleCommand(CommandBuffer& cb) {
 }
 
 void Accel::ReadSample() {
+  int16_t y;
   sensors_->ReadAccelData(&x, &y, &z);
   x -= xBias_;
   z -= zBias_;
-  angle = atan2(double(x), double(z)) * factor_;
+  angle = atan2(double(x), double(z)) * kRadToDegFactor;
 }

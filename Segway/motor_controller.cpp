@@ -71,7 +71,8 @@ void MotorController::Update() {
 
   left_power_ = left_zero_ + left_power * (left_one_ - left_zero_);
   right_power_ = right_zero_ + right_power * (right_one_ - right_zero_);
-  motor_driver_->SetPower(left_direction, left_power_, right_direction, right_power_);
+  motor_driver_->SetPower(left_direction, left_power_,
+                          right_direction, right_power_);
 }
 
 bool MotorController::HandleCommand(CommandBuffer& cb) {
