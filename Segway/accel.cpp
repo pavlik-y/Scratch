@@ -2,7 +2,6 @@
 
 #include <math.h>
 
-#include "command_buffer.h"
 #include "config.h"
 #include "gyro.h"
 #include "sensor_chip.h"
@@ -32,20 +31,6 @@ void Accel::Update() {
 void Accel::ReadConfig(Config* config) {
   yBias_ = (int)config->ReadFloat_P(kAccel_BiasY);
   zBias_ = (int)config->ReadFloat_P(kAccel_BiasZ);
-}
-
-bool Accel::HandleCommand(CommandBuffer& cb) {
-  if (strcmp_P(cb.command, PSTR("RdAcc")) == 0) {
-    cb.BeginResponse();
-    cb.WriteValue(y);
-    cb.WriteValue(z);
-    cb.WriteValue(angle);
-    cb.WriteValue(yBias_);
-    cb.WriteValue(zBias_);
-    cb.EndResponse();
-    return true;
-  }
-  return false;
 }
 
 void Accel::ReadSample() {

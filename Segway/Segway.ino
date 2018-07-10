@@ -139,8 +139,9 @@ void setup() {
   // component_manager.RegisterComponent(&power_adjuster);
 
   Serial.println("Before diag Setup");
-  diag.Setup(&gyro, &accel, &sensor_fusion, &position,
-      &left_encoder, &right_encoder, &tilt_controller, &motor_controller);
+  diag.Setup(&gyro, &accel, &sensor_fusion,
+      &fall_detector, &tilt_controller, &motor_controller,
+      &left_encoder, &right_encoder, &position, &velocity_controller);
   component_manager.RegisterComponent(&diag);
 
   Serial.println("Setup done");

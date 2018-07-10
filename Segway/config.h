@@ -34,7 +34,6 @@ class CommandBuffer;
   F(kVelCtrl_KL, "VelCtrl.KL", 0) \
   F(kMotor_TurnOffset, "Motor.TurnOffset", 0) \
   F(kPos_SampleInterval, "Pos.SampleInterval", 10000.0) \
-  F(kPos_Lambda, "Pos.Lambda", 0) \
   F(kDiagMode, "DiagMode", 0) \
 
 class ConfigStore {

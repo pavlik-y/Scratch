@@ -14,10 +14,7 @@ class Gyro : public Component {
   void Setup(SensorChip* sensors);
 
   void Update() override;
-  bool HandleCommand(CommandBuffer& cb) override;
   void ReadConfig(Config* config) override;
-
-  void SetBias(double bias);
 
   Version version;
   double rate;

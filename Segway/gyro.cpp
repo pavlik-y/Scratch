@@ -1,6 +1,5 @@
 #include "gyro.h"
 
-#include "command_buffer.h"
 #include "config.h"
 #include "sensor_chip.h"
 
@@ -32,19 +31,4 @@ void Gyro::ReadSample() {
   sensors_->ReadGyroData(&x, &y, &z);
   raw_rate = x;
   rate = (double(raw_rate) - bias_) * sensors_->kGyroFactor;
-}
-
-bool Gyro::HandleCommand(CommandBuffer& cb) {
-  if (strcmp_P(cb.command, PSTR("RdGyro")) == 0) {
-    cb.BeginResponse();
-    cb.WriteValue(raw_rate);
-    cb.WriteValue(rate);
-    cb.WriteValue(bias_);
-    cb.EndResponse();
-    return true;
-  }
-  return false;
-}
-void Gyro::SetBias(double bias) {
-  bias_ = bias;
 }

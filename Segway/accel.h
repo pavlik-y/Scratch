@@ -6,7 +6,6 @@
 #include "component.h"
 #include "i2c_device.h"
 
-class CommandBuffer;
 class Config;
 class Gyro;
 class SensorChip;
@@ -19,7 +18,6 @@ public:
 
   void Update() override;
   void ReadConfig(Config* config) override;
-  bool HandleCommand(CommandBuffer& cb) override;
 
   int16_t y;
   int16_t z;
