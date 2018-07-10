@@ -11,7 +11,7 @@ Accel::Accel() = default;
 
 void Accel::Setup(SensorChip* sensors, Gyro* gyro) {
 
-  xBias_ = 0;
+  yBias_ = 0;
   zBias_ = 0;
   sensors_ = sensors;
   gyro_ = gyro;
@@ -22,23 +22,25 @@ void Accel::Setup(SensorChip* sensors, Gyro* gyro) {
 void Accel::Update() {
   if (gyro_version_ != gyro_->version) {
     gyro_version_ = gyro_->version;
+    digitalWrite(LED_BLUE, HIGH);
     ReadSample();
+    digitalWrite(LED_BLUE, LOW);
     ++version;
   }
 }
 
 void Accel::ReadConfig(Config* config) {
-  xBias_ = (int)config->ReadFloat_P(kAccel_BiasX);
+  yBias_ = (int)config->ReadFloat_P(kAccel_BiasY);
   zBias_ = (int)config->ReadFloat_P(kAccel_BiasZ);
 }
 
 bool Accel::HandleCommand(CommandBuffer& cb) {
   if (strcmp_P(cb.command, PSTR("RdAcc")) == 0) {
     cb.BeginResponse();
-    cb.WriteValue(x);
+    cb.WriteValue(y);
     cb.WriteValue(z);
     cb.WriteValue(angle);
-    cb.WriteValue(xBias_);
+    cb.WriteValue(yBias_);
     cb.WriteValue(zBias_);
     cb.EndResponse();
     return true;
@@ -47,9 +49,9 @@ bool Accel::HandleCommand(CommandBuffer& cb) {
 }
 
 void Accel::ReadSample() {
-  int16_t y;
+  int16_t x;
   sensors_->ReadAccelData(&x, &y, &z);
-  x -= xBias_;
+  y -= yBias_;
   z -= zBias_;
-  angle = atan2(double(x), double(z)) * kRadToDegFactor;
+  angle = atan2(double(-y), double(z)) * kRadToDegFactor;
 }

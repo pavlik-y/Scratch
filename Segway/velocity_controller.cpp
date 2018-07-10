@@ -1,44 +1,35 @@
 #include "velocity_controller.h"
 
-#include "command_buffer.h"
 #include "config.h"
 #include "position.h"
+#include "tilt_controller.h"
 
-void VelocityController::Setup(Position* position) {
+void VelocityController::Setup(
+    Position* position, TiltController* tilt_controller) {
+  tilt_controller_ = tilt_controller;
   position_ = position;
   position_version_ = position_->version;
-  // last_sample_time_ = position_->sample_time;
-  version = 0;
-  velocity_to_angle_.SetSetpoint(0.0);
+  last_sample_time_ = position_->sample_time_micros;
+  last_position_ = (position_->left_pos + position_->right_pos) / 2.0;
+  SetTargetVelocity(0);
 }
 
 void VelocityController::Update() {
   if (position_version_ == position_->version)
     return;
   position_version_ = position_->version;
-  // unsigned long now = position_->sample_time;
-  double set_velocity = 0;
-  // if (ir_->command == IR::Forward)
-  //   set_velocity = 30.0;
-  // else if(ir_->command == IR::Back)
-  //   set_velocity = -30.0;
-  // velocity_to_angle_.SetSetpoint(set_velocity);
-  // velocity_to_angle_.CalcOutput(position_->velocity, 0, ElapsedTime(last_sample_time_, now));
-  // angle_offset = constrain(velocity_to_angle_.output, -5.0, 5.0);
-  // last_sample_time_ = now;
-  // ++version;
-}
+  unsigned long now = position_->sample_time_micros;
 
-bool VelocityController::HandleCommand(CommandBuffer& cb) {
-  if (strcmp_P(cb.command, PSTR("RdVelCtrl")) == 0) {
-    cb.BeginResponse();
-    cb.WriteValue(angle_offset);
-    cb.WriteValue(velocity_to_angle_.ie);
-    cb.WriteValue(velocity_to_angle_.setpoint);
-    cb.EndResponse();
-    return true;
-  }
-  return false;
+  double current_position = (position_->left_pos + position_->right_pos) / 2.0;
+  double time_delta = double(now - last_sample_time_) / 1000000.0;
+  velocity = (current_position - last_position_) / time_delta;
+  velocity_to_angle_.CalcOutput(velocity, 0, 0);
+  target_angle = velocity_to_angle_.output;
+  tilt_controller_->SetTargetAngle(target_angle);
+
+  last_sample_time_ = now;
+  last_position_ = current_position;
+  ++version;
 }
 
 void VelocityController::ReadConfig(Config* config) {
@@ -48,4 +39,8 @@ void VelocityController::ReadConfig(Config* config) {
   double lambda = config->ReadFloat_P(kVelCtrl_KL);
 
   velocity_to_angle_.SetCoefficients(kp, ki, kd, lambda);
+}
+
+void VelocityController::SetTargetVelocity(double velocity) {
+  velocity_to_angle_.SetSetpoint(velocity);
 }

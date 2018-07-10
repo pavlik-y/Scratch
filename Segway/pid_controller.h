@@ -5,7 +5,7 @@ class PidController {
 public:
   PidController();
 
-  void CalcOutput(double value, double error_delta, double time_delta);
+  void CalcOutput(double value, double value_delta, double time_delta);
   void SetCoefficients(double Kp_, double Ki_, double Kd_, double lambda_);
   void SetSetpoint(double setpoint_);
 

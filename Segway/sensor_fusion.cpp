@@ -3,7 +3,6 @@
 #include "accel.h"
 #include "config.h"
 #include "gyro.h"
-#include "motor.h"
 
 void SensorFusion::Setup(Gyro* gyro, Accel* accel) {
   gyro_ = gyro;
@@ -24,18 +23,6 @@ void SensorFusion::Update() {
 
 void SensorFusion::ReadConfig(Config* config) {
   lambda_ = config->ReadFloat_P(kSF_Lambda);
-}
-
-bool SensorFusion::HandleCommand(CommandBuffer& cb) {
-  if (strcmp_P(cb.command, PSTR("RdSF")) == 0) {
-    cb.BeginResponse();
-    cb.WriteValue(lambda_);
-    cb.WriteValue(accel_angle);
-    cb.WriteValue(complementary_angle);
-    cb.EndResponse();
-    return true;
-  }
-  return false;
 }
 
 void SensorFusion::UpdateAngle(unsigned long now) {

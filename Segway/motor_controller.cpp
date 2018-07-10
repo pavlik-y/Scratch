@@ -1,88 +1,100 @@
 #include "motor_controller.h"
 
-#include "calibration.h"
-#include "fall_detector.h"
-#include "motor.h"
-#include "tilt_controller.h"
 #include "config.h"
-#include "command_buffer.h"
+#include "fall_detector.h"
+#include "motor_driver.h"
+#include "tilt_controller.h"
 
-void MotorController::Setup(
-    MotorDriver* motor_driver, TiltController* tilt_controller,
-    FallDetector* fall_detector, Calibration* calibration) {
+PowerAndDirection
+VelocityToPowerConverter::VelocityToPowerAndDirection(double velocity) {
+  int direction = velocity < 0 ? -1 : 1;
+  velocity = abs(velocity);
+
+  PowerAndDirection result = {0.0, 0};
+  if (velocity < min_velocity_)
+    return result;
+  // ratio = (max_power_ - min_power_) / (max_velocity_ - min_velocity_);
+  double power = min_power_ +
+      (velocity - min_velocity_) * ratio_;
+  result.power = power;
+  result.direction = direction;
+  return result;
+}
+void VelocityToPowerConverter::SetParameters(
+    double min_velocity, double max_velocity,
+    double min_power, double max_power) {
+  min_velocity_ = min_velocity;
+  min_power_ = min_power;
+  ratio_ = (max_power - min_power) / (max_velocity - min_velocity);
+}
+
+void MotorController::Setup(MotorDriver* motor_driver,
+    TiltController* tilt_controller, FallDetector* fall_detector) {
   motor_driver_ = motor_driver;
   tilt_controller_ = tilt_controller;
   tilt_controller_version_ = tilt_controller_->version;
   fall_detector_ = fall_detector;
   fall_detector_version_ = fall_detector_->version;
-  calibration_ = calibration;
-  calibration_version_ = calibration_->version;
-  left_zero_ = 0;
-  left_one_ = 0;
-  right_zero_ = 0;
-  right_one_ = 0;
 }
 
 void MotorController::ReadConfig(Config* config) {
-  left_zero_ = config->ReadFloat_P(kMotor_LeftZero);
-  left_one_ = config->ReadFloat_P(kMotor_LeftOne);
-  right_zero_ = config->ReadFloat_P(kMotor_RightZero);
-  right_one_ = config->ReadFloat_P(kMotor_RightOne);
-  turn_offset_ = config->ReadFloat_P(kMotor_TurnOffset);
+  ReadConverterParameters(config, &left_converter_,
+    kMotor_Left_MinVel, kMotor_Left_MaxVel,
+    kMotor_Left_MinPow, kMotor_Left_MaxPow);
+  ReadConverterParameters(config, &right_converter_,
+    kMotor_Right_MinVel, kMotor_Right_MaxVel,
+    kMotor_Right_MinPow, kMotor_Right_MaxPow);
   motor_enabled_ = config->ReadFloat_P(kMotor_Enabled) > 0.5;
+  if (!motor_enabled_) {
+    motor_driver_->SetPower(0, 0, 0, 0);
+  }
+}
+
+void MotorController::ReadConverterParameters(
+    Config* config, VelocityToPowerConverter* converter,
+    const char* min_vel_name, const char* max_vel_name,
+    const char* min_power_name, const char* max_power_name) {
+  double min_velocity = config->ReadFloat_P(min_vel_name);
+  double max_velocity = config->ReadFloat_P(max_vel_name);
+  double min_power = config->ReadFloat_P(min_power_name);
+  double max_power = config->ReadFloat_P(max_power_name);
+  converter->SetParameters(min_velocity, max_velocity, min_power, max_power);
+}
+
+void MotorController::SetVelocity(double left_velocity, double right_velocity) {
+  PowerAndDirection left = left_converter_.VelocityToPowerAndDirection(
+      left_velocity);
+  PowerAndDirection right = right_converter_.VelocityToPowerAndDirection(
+      right_velocity);
+  motor_driver_->SetPower(
+      left.direction, left.power, right.direction, right.power);
+  left_power = left.power;
+  right_power = right.power;
 }
 
 void MotorController::Update() {
-  if (tilt_controller_version_ == tilt_controller_->version &&
-      fall_detector_version_ == fall_detector_->version &&
-      calibration_version_ == calibration_->version)
-     return;
-  tilt_controller_version_ = tilt_controller_->version;
-  fall_detector_version_ = fall_detector_->version;
-  calibration_version_ = calibration_->version;
+  // Check upstream versions (tilt_controller, fall_detector).
+  // If nothing happened, return.
+  if (fall_detector_version_ != fall_detector_->version) {
+    if (!fall_detector_->standing)
+      motor_driver_->SetPower(0, 0, 0, 0);
+    fall_detector_version_ = fall_detector_->version;
+  }
 
-  if (!fall_detector_->standing || calibration_->state != 2 || !motor_enabled_) {
-    motor_driver_->SetPower(1, 0, 1, 0);
+  if (tilt_controller_version_ == tilt_controller_->version)
+    return;
+  tilt_controller_version_ = tilt_controller_->version;
+
+  if (!motor_enabled_ || !fall_detector_->standing) {
     return;
   }
 
-  double left_power = tilt_controller_->power;
-  double right_power = tilt_controller_->power;
-  // if (ir_->command == IR::Left) {
-  //   left_power += turn_offset_;
-  //   right_power -= turn_offset_;
-  // } else if (ir_->command == IR::Right) {
-  //   left_power -= turn_offset_;
-  //   right_power += turn_offset_;
-  // }
-  left_power = constrain(left_power, -1.0, 1.0);
-  right_power = constrain(right_power, -1.0, 1.0);
+  // Get target velocity.
+  double target_velocity = tilt_controller_->velocity;
 
-  int left_direction = 1;
-  int right_direction = 1;
-  if (left_power < 0) {
-    left_power = -left_power;
-    left_direction = -1;
-  }
-  if (right_power < 0) {
-    right_power = -right_power;
-    right_direction = -1;
-  }
+  // Adjust by turn offset.
 
-  left_power_ = left_zero_ + left_power * (left_one_ - left_zero_);
-  right_power_ = right_zero_ + right_power * (right_one_ - right_zero_);
-  motor_driver_->SetPower(left_direction, left_power_,
-                          right_direction, right_power_);
-}
-
-bool MotorController::HandleCommand(CommandBuffer& cb) {
-  if (strcmp_P(cb.command, PSTR("RdMotor")) == 0) {
-    cb.BeginResponse();
-    cb.WriteValue(tilt_controller_->power);
-    cb.WriteValue(left_power_);
-    cb.WriteValue(right_power_);
-    cb.EndResponse();
-    return true;
-  }
-  return false;
+  // Convert to PowerAndDirection
+  // Pass to MotorDriver
+  SetVelocity(target_velocity, target_velocity);
 }

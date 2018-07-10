@@ -9,29 +9,33 @@
 
 class CommandBuffer;
 
+// WrConfig:Motor.Right.MaxVel,100
 #define CONFIG_VALUES(F) \
-  F(kConfigVersion, "FormatVersion", 2.0) \
-  F(kGyro_Bias, "Gyro.Bias", 168) \
-  F(kAccel_BiasX, "Accel.BiasX", -270) \
+  F(kConfigVersion, "FormatVersion", 6) \
+  F(kGyro_Bias, "Gyro.Bias", -27) \
+  F(kAccel_BiasY, "Accel.BiasY", -150) \
   F(kAccel_BiasZ, "Accel.BiasZ", -800) \
   F(kSF_Lambda, "SF.Lambda", 0.02) \
   F(kBal_UprightAngle, "Bal.UprightAngle", 0) \
-  F(kTiltCtrl_KP, "TiltCtrl.KP", 0) \
-  F(kTiltCtrl_KI, "TiltCtrl.KI", 0) \
+  F(kTiltCtrl_KP, "TiltCtrl.KP", 2) \
   F(kTiltCtrl_KD, "TiltCtrl.KD", 0) \
-  F(kTiltCtrl_KL, "TiltCtrl.KL", 0) \
-  F(kMotor_LeftZero, "Motor.LeftZero", 0) \
-  F(kMotor_LeftOne, "Motor.LeftOne", 0) \
-  F(kMotor_RightZero, "Motor.RightZero", 0) \
-  F(kMotor_RightOne, "Motor.RightOne", 0) \
+  F(kMotor_Left_MinVel, "Motor.Left.MinVel", 10) \
+  F(kMotor_Left_MaxVel, "Motor.Left.MaxVel", 160) \
+  F(kMotor_Left_MinPow, "Motor.Left.MinPow", 0.3) \
+  F(kMotor_Left_MaxPow, "Motor.Left.MaxPow", 0.9) \
+  F(kMotor_Right_MinVel, "Motor.Right.MinVel", 10) \
+  F(kMotor_Right_MaxVel, "Motor.Right.MaxVel", 160) \
+  F(kMotor_Right_MinPow, "Motor.Right.MinPow", 0.3) \
+  F(kMotor_Right_MaxPow, "Motor.Right.MaxPow", 0.9) \
+  F(kMotor_Enabled, "Motor.Enabled", 0) \
   F(kVelCtrl_KP, "VelCtrl.KP", 0) \
   F(kVelCtrl_KI, "VelCtrl.KI", 0) \
   F(kVelCtrl_KD, "VelCtrl.KD", 0) \
   F(kVelCtrl_KL, "VelCtrl.KL", 0) \
-  F(kMotor_Enabled, "Motor.Enabled", 0) \
   F(kMotor_TurnOffset, "Motor.TurnOffset", 0) \
   F(kPos_SampleInterval, "Pos.SampleInterval", 10000.0) \
   F(kPos_Lambda, "Pos.Lambda", 0) \
+  F(kDiagMode, "DiagMode", 0) \
 
 class ConfigStore {
 public:

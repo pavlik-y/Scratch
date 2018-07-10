@@ -13,7 +13,6 @@ public:
   void Setup(SensorFusion* sensor_fusion);
 
   void Update() override;
-  bool HandleCommand(CommandBuffer& cb) override;
 
   bool standing = false;
   Version version = 0;

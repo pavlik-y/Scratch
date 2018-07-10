@@ -7,24 +7,30 @@
 #include "component.h"
 #include "pid_controller.h"
 
-class CommandBuffer;
 class Config;
 class Position;
+class TiltController;
 
 class VelocityController : public Component {
 public:
-  void Setup(Position* position);
+  void Setup(Position* position, TiltController* tilt_controller);
+
   void Update() override;
-  bool HandleCommand(CommandBuffer& cb) override;
   void ReadConfig(Config* config) override;
-  Version version;
-  double angle_offset;
+
+  void SetTargetVelocity(double velocity);
+
+  Version version = 0;
+  double velocity = 0;
+  double target_angle = 0;
 
 private:
   Position* position_;
   Version position_version_;
+  TiltController* tilt_controller_;
   PidController velocity_to_angle_;
   unsigned long last_sample_time_;
+  double last_position_;
 };
 
 #endif  // VELOCITY_CONTROLLER_H_

@@ -3,12 +3,10 @@
 
 #include <Arduino.h>
 
-#include "command_buffer.h"
 #include "common.h"
 #include "component.h"
 
 class Accel;
-class CommandBuffer;
 class Config;
 class Gyro;
 
@@ -18,7 +16,6 @@ public:
 
   void Update() override;
   void ReadConfig(Config* config) override;
-  bool HandleCommand(CommandBuffer& cb) override;
 
   Version version = 0;
   double gyro_rate;

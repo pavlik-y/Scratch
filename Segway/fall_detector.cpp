@@ -24,15 +24,3 @@ void FallDetector::Update() {
     ++version;
   }
 }
-
-bool FallDetector::HandleCommand(CommandBuffer& cb) {
-  if (strcmp_P(cb.command, PSTR("RdFD")) == 0) {
-    cb.BeginResponse();
-    cb.WriteValue(standing);
-    cb.WriteValue(version);
-    cb.WriteValue(sensor_fusion_version_);
-    cb.EndResponse();
-    return true;
-  }
-  return false;
-}

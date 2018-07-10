@@ -18,10 +18,6 @@ void halt(int pulseTime) {
   }
 }
 
-double ElapsedTime(unsigned long then, unsigned long now) {
-  return double(now - then) * 0.001;
-}
-
 double LowPassFilter(double value, double sample, double lambda) {
   return value + lambda * (sample - value);
 }

@@ -6,50 +6,34 @@
 #include "common.h"
 #include "config.h"
 
-//static const double kPosFactor = 0.015625;
-static const double kPosFactor = 0.015625;
+  // 960 ticks for one rotation of the wheel
+  // D = 90mm
+  // 285 mm
 
-void Position::Setup(SwRotaryEncoder* right_encoder) {
+static const double kPosFactor = 0.0296875;
+
+void Position::Setup(
+    SwRotaryEncoder* left_encoder, SwRotaryEncoder* right_encoder) {
+  left_encoder_ = left_encoder;
   right_encoder_ = right_encoder;
-  last_sample_time_micros = micros();
+  sample_time_micros = micros();
+  left_pos = (double)left_encoder_->readAbs() * kPosFactor;
+  right_pos = (double)right_encoder_->readAbs() * kPosFactor;
   version = 0;
-  pos = 0;
-  // last_pos_ = 0;
-  // velocity = 0;
-  // avg_velocity = 0;
-  // lambda_ = 0;
-  last_sample_time_micros = micros();
 }
 
 void Position::ReadConfig(Config* config) {
-  // lambda_ = config->ReadFloat_P(kPos_Lambda);
   sample_interval_micros_ =
       (unsigned long)config->ReadFloat_P(kPos_SampleInterval);
 }
 
 void Position::Update() {
   unsigned long now = micros();
-  if (now - last_sample_time_micros < sample_interval_micros_)
+  if (now - sample_time_micros < sample_interval_micros_)
     return;
-  encoder_pos = right_encoder_->readAbs();
-  pos = double(encoder_pos) * kPosFactor;
-
-  last_sample_time_micros = now;
+  sample_time_micros = now;
   ++version;
 
-  // velocity = (pos - last_pos_) / (double (now - sample_time) * 0.001);
-  // avg_velocity = LowPassFilter(avg_velocity, velocity, lambda_);
-  // last_pos_ = pos;
-}
-
-bool Position::HandleCommand(CommandBuffer& cb) {
-  if (strcmp_P(cb.command, PSTR("RdPos")) == 0) {
-    cb.BeginResponse();
-    cb.WriteValue(pos);
-    // cb.WriteValue(velocity);
-    // cb.WriteValue(avg_velocity);
-    cb.EndResponse();
-    return true;
-  }
-  return false;
+  left_pos = (double)left_encoder_->readAbs() * kPosFactor;
+  right_pos = (double)right_encoder_->readAbs() * kPosFactor;
 }

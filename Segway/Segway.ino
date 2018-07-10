@@ -3,7 +3,9 @@
 // Pinout: https://cdn-learn.adafruit.com/assets/assets/000/046/248/original/microcontrollers_Feather_NRF52_Pinout_v1.2-1.png?1504885794
 
 #include <Arduino.h>
+
 #include <bluefruit.h>
+#include <HardwarePWM.h>
 #include <Nffs.h>
 #include <SwRotaryEncoder.h>
 #include <SoftwareSerial.h>
@@ -16,7 +18,7 @@
 #include "diag.h"
 #include "fall_detector.h"
 #include "gyro.h"
-#include "motor.h"
+#include "motor_driver.h"
 #include "motor_controller.h"
 #include "motor_encoder.h"
 #include "position.h"
@@ -26,29 +28,29 @@
 #include "velocity_controller.h"
 
 // Pins
-// const int LEFT_MOTOR_A = 6;
-// const int LEFT_MOTOR_B = 7;
-// const int LEFT_MOTOR_EN = 9;
-// const int RIGHT_MOTOR_A = 8;
-// const int RIGHT_MOTOR_B = 11;
-// const int RIGHT_MOTOR_EN = 10;
-// const int RIGHT_ENCODER_A = 2;
-// const int RIGHT_ENCODER_B = 4;
-//const int LEFT_ENCODER_A = 3;
-//const int LEFT_ENCODER_B = 5;
 // const int BLUETOOTH_RX = 12;
 // const int BLUETOOTH_TX = 13;
-const int GYRO_DATA_READY_PIN = 15;
+const int GYRO_DATA_READY_PIN = 27;
 const int RIGHT_ENCODER_A = 7;
-const int RIGHT_ENCODER_B = 16;
+const int RIGHT_ENCODER_B = 11;
+const int LEFT_ENCODER_A = 15;
+const int LEFT_ENCODER_B = 16;
+
+const int LEFT_MOTOR_A = 28;
+const int LEFT_MOTOR_B = 29;
+const int LEFT_MOTOR_EN = 2;
+const int RIGHT_MOTOR_A = 5;
+const int RIGHT_MOTOR_B = 4;
+const int RIGHT_MOTOR_EN = 3;
+// const int MOTOR_DRIVER_ADDRESS = 0x0f;
 
 
-//MotorEncoder left_encoder;
-// // MotorEncoder right_encoder(RIGHT_ENCODER_A, RIGHT_ENCODER_B);
-// // MotorDriver motor_driver(LEFT_MOTOR_A, LEFT_MOTOR_B, LEFT_MOTOR_EN,
-// //                          RIGHT_MOTOR_A, RIGHT_MOTOR_B, RIGHT_MOTOR_EN);
+MotorDriver motor_driver(&HwPWM0,
+    LEFT_MOTOR_A, LEFT_MOTOR_B, LEFT_MOTOR_EN,
+    RIGHT_MOTOR_A, RIGHT_MOTOR_B, RIGHT_MOTOR_EN);
 // SoftwareSerial bt(BLUETOOTH_RX, BLUETOOTH_TX);
 SwRotaryEncoder right_encoder;
+SwRotaryEncoder left_encoder;
 
 SensorChip sensors(GYRO_DATA_READY_PIN);
 
@@ -70,23 +72,7 @@ SensorFusion sensor_fusion;
 TiltController tilt_controller;
 VelocityController velocity_controller;
 
-PidController angle_to_power;
-
-//void ReadLeftEncoder() {
-//  left_encoder.Read();
-//}
-
-// void ReadRightEncoder() {
-//   right_encoder.Read();
-// }
-
-void SetupInterrupts() {
-  // attachInterrupt(0, ReadRightEncoder, CHANGE);
-//  attachInterrupt(1, ReadLeftEncoder, CHANGE);
-}
-
 void setup() {
-  pinMode(15, INPUT);
 
   Wire.begin();
   Wire.setClock(400000);
@@ -97,9 +83,15 @@ void setup() {
   Bluefruit.begin();
   Nffs.begin();
 
+  left_encoder.begin(LEFT_ENCODER_A, LEFT_ENCODER_B);
   right_encoder.begin(RIGHT_ENCODER_A, RIGHT_ENCODER_B);
+  motor_driver.Setup();
 
+  Serial.println("Before sensors Setup");
+  pinMode(GYRO_DATA_READY_PIN, INPUT);
   sensors.Setup();
+  Serial.println("After sensors Setup");
+
 
   // bt.begin(9600);
   // bt.listen();
@@ -107,13 +99,11 @@ void setup() {
   // {PAV} pass valid BLE.
   command_buffer.Setup(&Serial);
 
-  // motor_driver.Setup();
-  // motor_driver.SetupTimer1();
-
   config_store.Setup("/Segway.cfg", Config::GetConfigValuesCount());
 
   config_version = config.version;
 
+  Serial.println("Before config Setup");
   config.Setup(&config_store);
   component_manager.RegisterComponent(&config);
 
@@ -130,27 +120,31 @@ void setup() {
   fall_detector.Setup(&sensor_fusion);
   component_manager.RegisterComponent(&fall_detector);
 
-  position.Setup(&right_encoder);
+  tilt_controller.Setup(&sensor_fusion);
+  component_manager.RegisterComponent(&tilt_controller);
+
+  motor_controller.Setup(&motor_driver, &tilt_controller, &fall_detector);
+  component_manager.RegisterComponent(&motor_controller);
+
+  position.Setup(&left_encoder, &right_encoder);
   component_manager.RegisterComponent(&position);
 
-  diag.Setup(&gyro, &accel, &sensor_fusion, &position);
-  component_manager.RegisterComponent(&diag);
-
-  velocity_controller.Setup(&position);
+  velocity_controller.Setup(&position, &tilt_controller);
   component_manager.RegisterComponent(&velocity_controller);
 
-  // tilt_controller.Setup(&sensor_fusion, &velocity_controller);
-  // component_manager.RegisterComponent(&tilt_controller);
+  // remote.Setup(&bt, &velocity_controller, &motor_controller);
+  // component_manager.RegisterComponent(&remote);
 
-  // {PAV} I don't think I need calibration.
-  // calibration.Setup(&accel, &gyro, &sensor_fusion, &motor_driver);
-  // component_manager.RegisterComponent(&calibration);
+  // power_adjuster.Setup(&position, &tilt_controller, &motor_controller);
+  // component_manager.RegisterComponent(&power_adjuster);
 
-  // motor_controller.Setup(
-  //     &motor_driver, &tilt_controller, &fall_detector, &calibration);
-  // component_manager.RegisterComponent(&motor_controller);
+  Serial.println("Before diag Setup");
+  diag.Setup(&gyro, &accel, &sensor_fusion, &position,
+      &left_encoder, &right_encoder, &tilt_controller, &motor_controller);
+  component_manager.RegisterComponent(&diag);
 
-  SetupInterrupts();
+  Serial.println("Setup done");
+
 }
 
 void ProcessCommand(CommandBuffer& cb) {
@@ -167,6 +161,7 @@ void ProcessCommand(CommandBuffer& cb) {
   cb.EndResponse();
 }
 
+unsigned long loop_counter = 0;
 void loop() {
   component_manager.Update();
 
@@ -177,5 +172,8 @@ void loop() {
     config_version = config.version;
     component_manager.ReadConfig(&config);
   }
+  auto led_value = (loop_counter++ / 1000 % 5 == 0) ?
+      HIGH : LOW;
+  digitalWrite(LED_RED, led_value);
 }
 

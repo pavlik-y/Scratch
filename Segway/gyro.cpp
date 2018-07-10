@@ -18,17 +18,19 @@ void Gyro::ReadConfig(Config* config) {
 void Gyro::Update() {
   if (!sensors_->GyroDataAvailable())
     return;
+  digitalWrite(LED_BLUE, HIGH);
   ReadSample();
+  digitalWrite(LED_BLUE, LOW);
   ++version;
 }
 
-// Reads rotation rate around y axis from gyro. Output is in deg/sec.
+// Reads rotation rate around x axis from gyro. Output is in deg/sec.
 void Gyro::ReadSample() {
   int16_t x;
   int16_t y;
   int16_t z;
   sensors_->ReadGyroData(&x, &y, &z);
-  raw_rate = y;
+  raw_rate = x;
   rate = (double(raw_rate) - bias_) * sensors_->kGyroFactor;
 }
 

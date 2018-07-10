@@ -10,6 +10,7 @@ void SensorChip::Setup() {
   uint8_t who_am_i = accel_gyro_.ReadByteRegister(0xf); // WHO_AM_I
   if (who_am_i != 0b01101000)
     halt("LSM9DS1 not detected");
+  Serial.println("After who_am_i");
 
   // CTRL_REG1_G
   // ODR_G = 119 Hz
@@ -21,7 +22,7 @@ void SensorChip::Setup() {
 
   // FIFO_CTRL
   // accel_gyro_.WriteRegister(0x2e, 0b00100000);
-  Serial.println("Sensors set up");
+  // Serial.println("Sensors set up");
 }
 
 bool SensorChip::GyroDataAvailable() {
