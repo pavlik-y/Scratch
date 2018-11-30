@@ -1,0 +1,2 @@
+- Change config to allow changing multiple values at a time
+- Write outline of tuning steps

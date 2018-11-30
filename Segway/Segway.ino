@@ -12,6 +12,7 @@
 #include <Wire.h>
 
 #include "accel.h"
+#include "ble_remote.h"
 #include "command_buffer.h"
 #include "component_manager.h"
 #include "config.h"
@@ -28,9 +29,8 @@
 #include "velocity_controller.h"
 
 // Pins
-// const int BLUETOOTH_RX = 12;
-// const int BLUETOOTH_TX = 13;
 const int GYRO_DATA_READY_PIN = 27;
+
 const int RIGHT_ENCODER_A = 7;
 const int RIGHT_ENCODER_B = 11;
 const int LEFT_ENCODER_A = 15;
@@ -42,13 +42,14 @@ const int LEFT_MOTOR_EN = 2;
 const int RIGHT_MOTOR_A = 5;
 const int RIGHT_MOTOR_B = 4;
 const int RIGHT_MOTOR_EN = 3;
-// const int MOTOR_DRIVER_ADDRESS = 0x0f;
 
 
 MotorDriver motor_driver(&HwPWM0,
     LEFT_MOTOR_A, LEFT_MOTOR_B, LEFT_MOTOR_EN,
     RIGHT_MOTOR_A, RIGHT_MOTOR_B, RIGHT_MOTOR_EN);
-// SoftwareSerial bt(BLUETOOTH_RX, BLUETOOTH_TX);
+
+BLEUart ble;
+
 SwRotaryEncoder right_encoder;
 SwRotaryEncoder left_encoder;
 
@@ -61,6 +62,7 @@ ComponentManager component_manager(15);
 Version config_version;
 
 Accel accel;
+BleRemote ble_remote;
 Config config;
 ConfigStore config_store;
 Diag diag;
@@ -82,6 +84,7 @@ void setup() {
 
   Bluefruit.begin();
   Nffs.begin();
+  ble.begin();
 
   left_encoder.begin(LEFT_ENCODER_A, LEFT_ENCODER_B);
   right_encoder.begin(RIGHT_ENCODER_A, RIGHT_ENCODER_B);
@@ -132,8 +135,8 @@ void setup() {
   velocity_controller.Setup(&position, &tilt_controller);
   component_manager.RegisterComponent(&velocity_controller);
 
-  // remote.Setup(&bt, &velocity_controller, &motor_controller);
-  // component_manager.RegisterComponent(&remote);
+  ble_remote.Setup(&ble, &velocity_controller, &motor_controller);
+  component_manager.RegisterComponent(&ble_remote);
 
   // power_adjuster.Setup(&position, &tilt_controller, &motor_controller);
   // component_manager.RegisterComponent(&power_adjuster);
@@ -144,8 +147,32 @@ void setup() {
       &left_encoder, &right_encoder, &position, &velocity_controller);
   component_manager.RegisterComponent(&diag);
 
+  SetupBle();
   Serial.println("Setup done");
+}
 
+void SetupBle() {
+  Bluefruit.setName("Segway");
+  Bluefruit.setConnectCallback(ConnectCallback);
+  Bluefruit.setDisconnectCallback(DisconnectCallback);
+  Bluefruit.Advertising.addService(ble);
+  Bluefruit.ScanResponse.addName();
+  Bluefruit.Advertising.restartOnDisconnect(true);
+  Bluefruit.Advertising.setInterval(32, 244); // in unit of 0.625 ms
+  Bluefruit.Advertising.setFastTimeout(30); // number of seconds in fast mode
+  // 0 = Don't stop advertising after n seconds
+  Bluefruit.Advertising.start(0);
+}
+
+void ConnectCallback(uint16_t conn_handle) {
+  Serial.println("Connected");
+  ble_remote.SetConnected(true);
+}
+
+void DisconnectCallback(uint16_t conn_handle, uint8_t reason)
+{
+  ble_remote.SetConnected(false);
+  Serial.println("Disconnected");
 }
 
 void ProcessCommand(CommandBuffer& cb) {
@@ -162,7 +189,6 @@ void ProcessCommand(CommandBuffer& cb) {
   cb.EndResponse();
 }
 
-unsigned long loop_counter = 0;
 void loop() {
   component_manager.Update();
 
@@ -173,8 +199,5 @@ void loop() {
     config_version = config.version;
     component_manager.ReadConfig(&config);
   }
-  auto led_value = (loop_counter++ / 1000 % 5 == 0) ?
-      HIGH : LOW;
-  digitalWrite(LED_RED, led_value);
 }
 

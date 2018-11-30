@@ -68,8 +68,8 @@ void MotorController::SetVelocity(double left_velocity, double right_velocity) {
       right_velocity);
   motor_driver_->SetPower(
       left.direction, left.power, right.direction, right.power);
-  left_power = left.power;
-  right_power = right.power;
+  left_power = left.power * double(left.direction);
+  right_power = right.power * double(right.direction);
 }
 
 void MotorController::Update() {
@@ -93,8 +93,14 @@ void MotorController::Update() {
   double target_velocity = tilt_controller_->velocity;
 
   // Adjust by turn offset.
+  double left_velocity = target_velocity + turn_offset;
+  double right_velocity = target_velocity - turn_offset;
 
   // Convert to PowerAndDirection
   // Pass to MotorDriver
-  SetVelocity(target_velocity, target_velocity);
+  SetVelocity(left_velocity, right_velocity);
+}
+
+void MotorController::SetTurnOffset(double turn_offset) {
+  this->turn_offset = turn_offset;
 }

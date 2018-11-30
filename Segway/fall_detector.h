@@ -8,7 +8,7 @@
 
 class SensorFusion;
 
-class FallDetector : public Component{
+class FallDetector : public Component {
 public:
   void Setup(SensorFusion* sensor_fusion);
 

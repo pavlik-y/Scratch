@@ -38,8 +38,11 @@ class MotorController : public Component {
   void ReadConfig(Config* config) override;
   void Update() override;
 
+  void SetTurnOffset(double turn_offset);
+
   double left_power = 0;
   double right_power = 0;
+  double turn_offset = 0;
 
  private:
   void ReadConverterParameters(Config* config,

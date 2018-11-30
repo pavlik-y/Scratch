@@ -51,31 +51,33 @@ void Diag::Update() {
 
 void Diag::DumpMeasurements() {
   switch (mode_) {
-    case Mode::ACCEL:
+    case Mode::ACCEL: // 1
         Serial.printf("%d,%d,%f,0\n", accel_->y, accel_->z, accel_->angle);
       break;
-    case Mode::GYRO:
+    case Mode::GYRO: // 2
         Serial.printf("%d,%f,0\n", gyro_->raw_rate, gyro_->rate);
       break;
-    case Mode::SENSOR_FUSION:
+    case Mode::SENSOR_FUSION: // 3
         Serial.printf("%f,%f,%d,0\n",
             sensor_fusion_->accel_angle, sensor_fusion_->complementary_angle, fall_detector_->standing ? 30 : -30);
       break;
-    case Mode::TILT_CONTROLLER:
+    case Mode::TILT_CONTROLLER: // 4
         Serial.printf("%f,%f,%f,0\n",
             sensor_fusion_->complementary_angle,
             velocity_controller_->target_angle,
             tilt_controller_->velocity);
       break;
-    case Mode::MOTOR_CONTROLLER:
-        Serial.printf("%f,%f,%f,0\n",
+    case Mode::MOTOR_CONTROLLER: // 5
+        Serial.printf("%f,%f,%f,%f,0\n",
             tilt_controller_->velocity,
-            motor_controller_->left_power, motor_controller_->right_power);
+            velocity_controller_->velocity,
+            motor_controller_->left_power * 100.0,
+            motor_controller_->right_power * 100.0);
       break;
-    case Mode::POSITION:
+    case Mode::POSITION: // 6
         Serial.printf("%f,%f,0\n", position_->left_pos, position_->right_pos);
       break;
-    case Mode::VELOCITY_CONTROLLER:
+    case Mode::VELOCITY_CONTROLLER: // 7
         Serial.printf("%f,%f,0\n",
             velocity_controller_->velocity, velocity_controller_->target_angle);
       break;

@@ -21,9 +21,7 @@ void Accel::Setup(SensorChip* sensors, Gyro* gyro) {
 void Accel::Update() {
   if (gyro_version_ != gyro_->version) {
     gyro_version_ = gyro_->version;
-    digitalWrite(LED_BLUE, HIGH);
     ReadSample();
-    digitalWrite(LED_BLUE, LOW);
     ++version;
   }
 }

@@ -1,0 +1,22 @@
+- Config parameters:
+  - MotorController:
+    - WrConfig:DiagMode,5
+    - WrConfig:Motor.Left.MinVel,3
+    - WrConfig:Motor.Left.MaxVel,100
+    - WrConfig:Motor.Left.MinPow,0.2
+    - WrConfig:Motor.Left.MaxPow,1
+    - WrConfig:Motor.Right.MinVel,3
+    - WrConfig:Motor.Right.MaxVel,100
+    - WrConfig:Motor.Right.MinPow,0.2
+    - WrConfig:Motor.Right.MaxPow,1
+  - TiltController:
+    - WrConfig:DiagMode,4
+    - WrConfig:TiltCtrl.KP,25
+    - WrConfig:TiltCtrl.KD,0
+  - VelocityController:
+    - WrConfig:VelCtrl.KP,0
+    - WrConfig:VelCtrl.KI,-0.2
+    - WrConfig:VelCtrl.KD,0
+    - WrConfig:VelCtrl.KL,0.2
+- Steps:
+  -

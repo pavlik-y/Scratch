@@ -11,13 +11,13 @@ class CommandBuffer;
 
 // WrConfig:Motor.Right.MaxVel,100
 #define CONFIG_VALUES(F) \
-  F(kConfigVersion, "FormatVersion", 6) \
-  F(kGyro_Bias, "Gyro.Bias", -27) \
+  F(kConfigVersion, "FormatVersion", 1) \
+  F(kGyro_Bias, "Gyro.Bias", -40) \
   F(kAccel_BiasY, "Accel.BiasY", -150) \
   F(kAccel_BiasZ, "Accel.BiasZ", -800) \
   F(kSF_Lambda, "SF.Lambda", 0.02) \
   F(kBal_UprightAngle, "Bal.UprightAngle", 0) \
-  F(kTiltCtrl_KP, "TiltCtrl.KP", 2) \
+  F(kTiltCtrl_KP, "TiltCtrl.KP", 100) \
   F(kTiltCtrl_KD, "TiltCtrl.KD", 0) \
   F(kMotor_Left_MinVel, "Motor.Left.MinVel", 10) \
   F(kMotor_Left_MaxVel, "Motor.Left.MaxVel", 160) \

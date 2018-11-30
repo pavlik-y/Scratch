@@ -17,9 +17,7 @@ void Gyro::ReadConfig(Config* config) {
 void Gyro::Update() {
   if (!sensors_->GyroDataAvailable())
     return;
-  digitalWrite(LED_BLUE, HIGH);
   ReadSample();
-  digitalWrite(LED_BLUE, LOW);
   ++version;
 }
 
