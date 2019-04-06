@@ -40,16 +40,16 @@ void CommandHandler::HandleButton(int button, bool pressed) {
   int sub_mode = 1;
 
   switch (button) {
-    case 5:
+    case 5: // Up?
       mode = MODE_FLASHLIGHT;
       break;
-    case 6:
+    case 6:  // Down?
       mode = MODE_OFF;
       break;
-    case 7:
+    case 7:  // Left?
       mode = MODE_SENSORS;
       break;
-    case 8:
+    case 8:  // Right?
       mode = MODE_PATTERN;
       break;
     case 1:

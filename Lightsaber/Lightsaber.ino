@@ -61,24 +61,29 @@ CommandHandler command_handler(&component_driver, &prefs, &rtc,
 CommandParser command_parser(&ble, &command_handler);
 
 void setup() {
-  strip.begin();
-  strip.clear();
-  strip.show();
-
   // while (!Serial);  // required for Flora & Micro
   Serial.begin(9600);
   Serial.println(F("-----------------------------------------"));
 
+  strip.begin();
+  Serial.println(F("after strip init."));
+  strip.clear();
+  strip.show();
+  Serial.println(F("after strip show."));
+
   if (!sensor.begin())
     halt(F("sensor init failed"));
+  Serial.println(F("after sensor init."));
 
- if (!rtc.begin()) {
-   Serial.println(F("rtc init failed"));
-   halt(3000);
- }
+  if (!rtc.begin()) {
+    Serial.println(F("rtc init failed"));
+    halt(3000);
+  }
+  Serial.println(F("after rtc init."));
 
   if (!ble.begin(false))
     halt(F("BLE init failed"));
+  Serial.println(F("after ble init."));
 
   ble.setMode(BLUEFRUIT_MODE_DATA);
 
@@ -90,6 +95,7 @@ void setup() {
   // sensor_display.SetSensorType(SensorDisplay::GYROSCOPE);
   // flashlight.Register(&component_driver);
   // rainbow.Register(&component_driver);
+  Serial.println(F("setup done."));
 }
 
 void loop() {
