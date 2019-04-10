@@ -17,29 +17,18 @@ class DeskProtocol {
   enum class State {
     IDLE,
     READY,
-    LISTENING,
-    MARK,
-    SPACE
+    LATCHED
   };
 
-  static void InterruptHandler();
-
   void SetState(State state);
-  void HandleEdge(uint32_t now);
-  void RecordSample(uint32_t now);
-  uint32_t DecodeWord();
-
-  constexpr static uint32_t kSampleCapacity = 50;
-
-  static DeskProtocol* s_current_reader_;
+  bool ReadWord(uint32_t* value);
+  int ReadPin();
 
   Controller* controller_;
   int pin_;
   int pin_out_;
-  State state_ = State::IDLE;
+  State state_ = State::LATCHED;
   uint32_t ready_time_ = 0;
-  uint32_t samples_[kSampleCapacity];
-  int sample_size_ = 0;
 };
 
 #endif  // DESK_PROTOCOL_H_

@@ -11,7 +11,20 @@
 #include "desk_controller.h"
 #include "desk_protocol.h"
 
-// http://www.plantuml.com/plantuml/uml/SoWkIImgAStDuSfFoafDBb5mIItEXh6TIajAylEAuToSqjII_FoI39Y0StvUIL5-Javg4KmaEBKeCn5kbh-FgmiN5qALWguTn7mG0UGW6m0tN44NLGBg27HXY4teeWWcI0Rg08VKl1IW3m40
+// http://www.plantuml.com/plantuml/uml/POz13e8m44NtSufUW0kuC4GmSQ6Hn1CKw0APTf9XUdynJNLej--rFs_QJInBz0WqljqafdVRsb4G9aJ7cLwY28MR3RE27Nc_ay7ofg7-cnS79g69KBEq-Q2m235aytAysD-xv_tQ0_mtJNCk2_NyLojr23JDKUgJAWafeyGgP3UfJkLaNbzNaMBPd4m_OeVBj4BhmXmzVW00
+
+#if 0
+  display.setTextSize(4);
+  display.setTextColor(WHITE);
+
+  display.clearDisplay();
+  display.setCursor(0,0);
+  // printf works too
+  display.print(measure.RangeMilliMeter);
+  display.print("mm");
+  display.display();
+
+#endif
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 32 // OLED display height, in pixels
@@ -20,15 +33,15 @@ BLEUart bleuart;
 Adafruit_SSD1306 oled(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 DeskController desk_controller;
-Controller controller(&desk_controller);
+Controller controller(&desk_controller, &oled);
 ButtonHandler button_handler(&controller);
 CommandParser command_parser(&bleuart, &controller);
 DeskProtocol desk_protocol(&controller);
 
 void setup() {
   Serial.begin(115200);
-  pinMode(6, INPUT_PULLUP);
-  while ( !Serial && digitalRead(6) == HIGH) delay(10);   // for nrf52840 with native usb
+  // pinMode(6, INPUT_PULLUP);
+  // while ( !Serial && digitalRead(6) == HIGH) delay(10);
 
   Serial.println(F("Start"));
 
@@ -36,6 +49,8 @@ void setup() {
     Serial.println("Failed to initialize oled");
   }
   oled.display();
+  oled.setTextSize(4);
+  oled.setTextColor(WHITE);
 
   Bluefruit.begin();
   // Set max power. Accepted values are: -40, -30, -20, -16, -12, -8, -4, 0, 4
@@ -82,10 +97,11 @@ void startAdv(void)
 }
 
 void loop() {
-  // command_parser.Tick();
-  // desk_controller.Tick();
-  // button_handler.Tick();
+  command_parser.Tick();
+  desk_controller.Tick();
+  button_handler.Tick();
   desk_protocol.Tick();
+  controller.Tick();
 }
 
 // void disconnect_callback(uint8_t reason)

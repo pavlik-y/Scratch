@@ -62,4 +62,15 @@ void DeskController::Tick() {
     // ExternalInputChanged(external_input);
     external_input_ = external_input;
   }
+  uint32_t now = millis();
+  double_click_detectors_[0].Update((external_input_ & 1) != 0, now);
+  double_click_detectors_[1].Update((external_input_ & 2) != 0, now);
+}
+
+bool DeskController::DoubleClickDetected(int button) {
+  return double_click_detectors_[button].DoubleClickDetected();
+}
+
+bool DeskController::ExternalInput() {
+  return external_input_ != 0;
 }

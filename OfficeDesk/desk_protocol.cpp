@@ -2,11 +2,12 @@
 
 #include "controller.h"
 
-const uint32_t kMarkInterval = 40000;
-const uint32_t kSampleInterval = 32000;
-const uint32_t kBitInterval = 1000;
+const uint32_t kMarkInterval = 30;
+const uint32_t kWaitInterval = 30000;
+const uint32_t kBitInterval = 980;
+const uint32_t kSampleInterval = 20;
 
-DeskProtocol* DeskProtocol::s_current_reader_ = nullptr;
+
 /*
 0100 0000 0110 0001 0001 0100 0000 0000 0
 D: 40611400 : Display on
@@ -54,64 +55,32 @@ void DeskProtocol::SetState(State state) {
     digitalWrite(pin_out_, LOW);
 }
 
-void DeskProtocol::InterruptHandler() {
-  if (s_current_reader_) {
-    uint32_t now = tick2us(xTaskGetTickCountFromISR());
-    s_current_reader_->HandleEdge(now);
-  }
+int DeskProtocol::ReadPin() {
+  return digitalRead(pin_);
 }
 
-void DeskProtocol::RecordSample(uint32_t now) {
-  if (sample_size_ < kSampleCapacity) {
-    samples_[sample_size_++] = now;
+bool DeskProtocol::ReadWord(uint32_t* value) {
+  for (int i = 0; i < kWaitInterval/kSampleInterval; i++) {
+    if (ReadPin() == HIGH)
+      break;
+    delayMicroseconds(kSampleInterval);
   }
-}
-
-void DeskProtocol::HandleEdge(uint32_t now) {
-  int level = digitalRead(pin_);
-  switch (state_) {
-    case State::LISTENING:
-      if (level == HIGH) {
-        RecordSample(now);
-        SetState(State::SPACE);
-      }
-      break;
-    case State::SPACE:
-      if (level == LOW) {
-        RecordSample(now);
-        SetState(State::MARK);
-      }
-      break;
-    case State::MARK:
-      if (level == HIGH) {
-        RecordSample(now);
-        SetState(State::SPACE);
-      }
-      break;
-  }
-}
-
-uint32_t DeskProtocol::DecodeWord() {
-  uint32_t value = 0;
-  int sample_index = 0;
-  bool bit_value = true;
+  if (ReadPin() == LOW)
+    return false;
+  delayMicroseconds(kBitInterval/2);
+  *value = 0;
   for (int bit_index = 0; bit_index < 32; bit_index++) {
-    uint32_t sample_time = kBitInterval / 2 + bit_index * kBitInterval;
-    while (sample_index < sample_size_ &&
-        samples_[sample_index] - samples_[0] < sample_time) {
-      bit_value = !bit_value;
-      sample_index++;
-    }
-    value <<= 1;
-    if (bit_value)
-      value |= 1;
+    *value <<= 1;
+    if (ReadPin() == LOW)
+      *value |= 1;
+    delayMicroseconds(kBitInterval);
   }
-  return value;
+  return true;
 }
 
 void DeskProtocol::Tick() {
-  int level = digitalRead(pin_);
-  uint32_t now = micros();
+  int level = ReadPin();
+  uint32_t now = millis();
   switch (state_) {
     case State::IDLE:
       if (level == LOW) {
@@ -121,26 +90,24 @@ void DeskProtocol::Tick() {
       break;
     case State::READY:
       if (now - ready_time_ >= kMarkInterval) {
-        SetState(State::LISTENING);
-        sample_size_ = 0;
-        s_current_reader_ = this;
-        // vTaskSuspendAll();
-        attachInterrupt(pin_, InterruptHandler, CHANGE);
+        vTaskSuspendAll();
+        uint32_t value = 0;
+        bool success = ReadWord(&value);
+        xTaskResumeAll();
+        if (success) {
+          Serial.printf("%WD:%x\n", value);
+          controller_->WordReceived(value);
+          SetState(State::IDLE);
+        } else {
+          // Serial.println("Failed to read");
+          SetState(State::LATCHED);
+        }
       } else if (level == HIGH) {
         SetState(State::IDLE);
       }
       break;
-    case State::MARK:
-    case State::SPACE:
-      if (sample_size_ > 0 && now - samples_[0] >= kSampleInterval) {
-        detachInterrupt(pin_);
-        // xTaskResumeAll();
-        s_current_reader_ = nullptr;
-        // Collect sample
-        for (int i = 0; i < sample_size_; i++)
-          Serial.printf("TS:%d\n", samples_[i]);
-        uint32_t value = DecodeWord();
-        Serial.printf("Word: %x\n", value);
+    case State::LATCHED:
+      if (level == HIGH) {
         SetState(State::IDLE);
       }
       break;

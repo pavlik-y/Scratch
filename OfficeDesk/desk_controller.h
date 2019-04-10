@@ -1,6 +1,8 @@
 #ifndef DESK_CONTROLLER_H_
 #define DESK_CONTROLLER_H_
 
+#include "double_click_detector.h"
+
 class DeskController {
  public:
   DeskController();
@@ -11,12 +13,17 @@ class DeskController {
 
   void Tick();
 
+  bool DoubleClickDetected(int button);
+  bool ExternalInput();
+
  private:
   int ReadExternalInput();
 
   int line_pins_[4];
   int current_command_;
   int external_input_;
+
+  DoubleClickDetector double_click_detectors_[2];
 };
 
 #endif  // DESK_CONTROLLER_H_
