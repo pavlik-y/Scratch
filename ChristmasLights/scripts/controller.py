@@ -12,7 +12,7 @@ def main():
     while p.poll:
       time.sleep(10)
       if os.path.getmtime(fname) != mtime:
-        p.kill()
+        p.terminate()
         break
 
 

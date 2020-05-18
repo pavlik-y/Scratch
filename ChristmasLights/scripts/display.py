@@ -13,6 +13,7 @@ def CreateDefaultStrip():
 class Display:
   def __init__(self, strip, height):
     self.strip = strip
+    self.num_pixels = self.strip.numPixels()
     self.height = height
     self.width = self.strip.numPixels() / self.height
 
@@ -26,11 +27,9 @@ class Display:
     self.strip.show()
 
   def FillColor(self, color):
-    for x in range(self.width):
-      for y in range(self.height):
-        self.SetPixelColor(x, y, color)
+    for i in xrange(self.num_pixels):
+      self.strip.setPixelColor(i, color)
 
   def FillColorRGB(self, r, g, b):
-    for x in range(self.width):
-      for y in range(self.height):
-        self.SetPixelColorRGB(x, y, r, g, b)
+    color = np.Color(g, r, b)
+    self.FillColor(color)
