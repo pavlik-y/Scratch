@@ -32,6 +32,7 @@ void setup() {
 }
 
 void loop() {
+
   Serial.print("Lux: "); Serial.println(veml.readLux());
   Serial.print("White: "); Serial.println(veml.readWhite());
   Serial.print("Raw ALS: "); Serial.println(veml.readALS());
@@ -46,8 +47,13 @@ void loop() {
 
   oled.clearDisplay();
   oled.setCursor(0, 0);
-  oled.printf("%2.2f C\n", bmp.readTemperature());
-  oled.printf("%4.2f mm", double(bmp.readPressure()) / 133.322);
+  if ((millis()/10000)%2 == 0) {
+    oled.printf("Temp:%2.1f\n", bmp.readTemperature());
+    oled.printf("Bar:%3.1f", double(bmp.readPressure()) / 133.322);
+  } else {
+    oled.printf("Lux:%3.1f\n", veml.readLux());
+    oled.printf("Wh:%3.1f", veml.readWhite());
+  }
   oled.display();
   delay(2000);
 }
