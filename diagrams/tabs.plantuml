@@ -1,0 +1,23 @@
+@startuml
+
+object ChromeActivity
+object TabModel {
+  setIndex()
+}
+
+object TabModelDelegate
+object TabModelImpl
+
+object TabModelSelector
+object TabModelSelectorBase
+object TabModelSelectorImpl
+
+ChromeActivity ..> TabModelSelector : getTabModelSelector()
+TabModelSelector ..> TabModel : getCurrentModel()
+TabModel <|-- TabModelImpl
+TabModelDelegate <|-- TabModelSelectorImpl
+TabModelSelectorBase <|-- TabModelSelectorImpl
+TabModelSelector <|-- TabModelSelectorBase
+TabModelImpl .> TabModelDelegate
+
+@enduml

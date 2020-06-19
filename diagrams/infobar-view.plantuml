@@ -1,0 +1,32 @@
+@startuml
+
+object ViewGroup
+object InfoBarContainerLayout
+object "InfoBarContainerLayout.Item" as IBCL_Item {
+  getView()
+  controlsEnabled
+  getAccessibilityText()
+  getPriority()
+  getInfoBarIdentifier()
+}
+object InfoBarView {
+  createContent()
+  onXxxClicked()
+}
+object InfoBar
+object InfoBarLayout
+object InfoBarCompactLayout
+
+object ConfirmInfoBar
+object SmsReceiverInfoBar
+
+InfoBarContainerLayout ..> IBCL_Item
+IBCL_Item <|-- InfoBarView
+InfoBarView <|-- InfoBar
+InfoBar <|-- ConfirmInfoBar
+ConfirmInfoBar <|-- SmsReceiverInfoBar
+InfoBar *-- InfoBarLayout
+InfoBarLayout .up.> InfoBarView
+InfoBarCompactLayout .up.> InfoBarView
+ViewGroup <|-- InfoBarLayout
+@enduml

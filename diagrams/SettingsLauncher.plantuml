@@ -1,0 +1,19 @@
+@startuml
+object Class
+object Object {
+  getClass()
+}
+
+object SettingsLauncher {
+  +setActivity(Class c)
+}
+
+object SettingsActivity
+
+SettingsLauncher .up.> Class
+Object <|-- SettingsActivity
+Object -up-> Class
+
+SettingsActivity .> SettingsLauncher : setActivity(class)
+
+@enduml

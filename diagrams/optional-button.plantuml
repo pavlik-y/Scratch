@@ -1,0 +1,33 @@
+@startuml
+
+object ButtonData
+note right: POD with button info
+
+package abstraction {
+object ButtonDataProvider {
+  add/removeObserver()
+  get()
+  destroy()
+}
+}
+
+object ToolbarManager
+object ToolbarLayout
+object TopToolbarCoordinator
+object IdentityDiscController
+object OptionalBrowsingModeButtonController {
+  updateButtonVisibility
+}
+object RootUiCoordinator
+
+IdentityDiscController *-- ButtonData
+
+ButtonDataProvider <|-- IdentityDiscController
+OptionalBrowsingModeButtonController ..> ButtonDataProvider
+TopToolbarCoordinator *-- OptionalBrowsingModeButtonController
+ToolbarManager ..> TopToolbarCoordinator
+TopToolbarCoordinator ..> ToolbarLayout
+RootUiCoordinator *-- IdentityDiscController
+TopToolbarCoordinator ..> IdentityDiscController
+
+@enduml

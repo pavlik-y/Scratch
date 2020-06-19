@@ -1,0 +1,22 @@
+@startuml
+object JavaScriptDialogManager
+object AppModalDialogManager
+object JavascriptAppModalDialog {
+  createAlertDialog()
+  createPromptDialog()
+  showJavascriptAppModalDialog()
+}
+object AppModalDialogController {
+  +DialogType
+  +Title
+  +MessageText
+}
+object AppModalDialogViewAndroid
+object AppModalDialogView
+object JavascriptModalDialog
+
+JavaScriptDialogManager <|-- AppModalDialogManager
+AppModalDialogView <|-- AppModalDialogViewAndroid
+JavascriptModalDialog <|-- JavascriptAppModalDialog
+AppModalDialogViewAndroid *-- AppModalDialogController
+@enduml

@@ -1,0 +1,38 @@
+@startuml
+object InfoBar
+object InfoBarContainer
+object InfoBarContainerIOS
+object InfoBarIOS
+object InfoBarDelegate
+
+object InfobarUIDelegate
+object InfoBarController
+object InfobarCoordinator
+object InfobarSaveCardCoordinator
+object SaveCardInfoBarController
+object InfobarContainerConsumer
+object LegacyInfobarContainerViewController
+object InfobarContainerCoordinator
+
+
+object AutofillSaveCardInfoBarDelegateMobile
+
+InfoBarDelegate <|-- AutofillSaveCardInfoBarDelegateMobile
+
+InfoBar <|-- InfoBarIOS
+
+InfoBarContainer <|-- InfoBarContainerIOS
+
+InfobarSaveCardCoordinator ..> AutofillSaveCardInfoBarDelegateMobile
+SaveCardInfoBarController ..> AutofillSaveCardInfoBarDelegateMobile
+InfoBar *-- InfoBarDelegate
+InfobarCoordinator <|-- InfobarSaveCardCoordinator
+InfoBarController <|-- SaveCardInfoBarController
+
+InfobarUIDelegate <|-- InfobarCoordinator
+InfobarUIDelegate <|-- InfoBarController
+InfobarContainerConsumer <|-- LegacyInfobarContainerViewController
+InfobarContainerConsumer <|-- InfobarContainerCoordinator
+InfoBarContainerIOS ..> InfobarContainerConsumer
+InfoBarIOS ..> InfobarUIDelegate
+@enduml

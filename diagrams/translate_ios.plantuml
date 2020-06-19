@@ -1,0 +1,89 @@
+@startuml
+
+object ChromeCoordinator {
+  start
+}
+object ChromeIOSTranslateClient
+object InfoBarContainer {
+  AddInfoBar()
+}
+
+object InfobarContainerConsumer
+object InfobarContainerCoordinator {
+  ' Called from common InfoBarContainer infrastructure
+  addInfoBarWithDelegate()
+  ' I guess this is where infobar gets shown
+  ' presentInfobarBannerAnimated
+  presentBannerForInfobarCoordinator()
+}
+object InfoBarContainerIOS {
+  PlatformSpecificAddInfoBar()
+  ' Handles new infobars: presented = true
+  consumer_
+  legacy_consumer_
+}
+object InfobarContainerMediator
+object InfobarCoordinator
+object InfobarCoordinatorImplementation
+object InfoBarDelegate
+object InfoBar
+object InfoBarIOS
+object InfoBarManager
+object "InfoBarManager::Observer" as IBM_Observer
+object InfobarTranslateMediator
+object InfobarUIDelegate
+object IOSTranslateDriver
+object TranslateClient
+
+' The main IOS class
+object TranslateInfobarCoordinator #LightBlue
+object TranslateInfoBarDelegate #LightBlue
+object TranslateManager
+
+object InfobarBannerViewController
+' ModalViewController
+' Model is passed to setupModalViewControllerWithPrefs as a dictionary
+' setupModalViewControllerWithPrefs can be called multiple times. Refreshes
+' view.
+object InfobarTranslateTableViewController
+object ChromeTableViewController
+object InfobarTranslateModalConsumer
+
+TranslateClient <|-- ChromeIOSTranslateClient
+
+ChromeIOSTranslateClient *-- TranslateManager
+ChromeIOSTranslateClient *-- IOSTranslateDriver
+
+TranslateManager -up-> TranslateClient
+
+InfoBarIOS *-- InfoBarDelegate
+InfoBarIOS --> InfobarUIDelegate
+InfobarCoordinator <|-- TranslateInfobarCoordinator
+InfobarCoordinatorImplementation <|-- TranslateInfobarCoordinator
+InfobarUIDelegate <|-- InfobarCoordinator
+InfoBarDelegate <|-- TranslateInfoBarDelegate
+InfoBarContainer <|-- InfoBarContainerIOS
+InfoBarContainerIOS -up-> InfobarContainerConsumer
+
+InfobarContainerCoordinator *-- InfobarContainerMediator
+InfobarContainerCoordinator --> "*" InfobarCoordinator
+InfobarContainerConsumer <|-- InfobarContainerCoordinator
+InfobarContainerMediator -up-> InfobarContainerConsumer
+InfobarContainerMediator *-- InfoBarContainerIOS
+TranslateInfoBarDelegate -up-> TranslateManager
+
+InfoBarManager --> IBM_Observer
+IBM_Observer <|-- InfoBarContainer
+InfoBarManager --> "*" InfoBar
+
+InfoBar <|-- InfoBarIOS
+
+ChromeCoordinator <|-- InfobarCoordinator
+TranslateInfobarCoordinator *-- InfobarTranslateMediator
+TranslateInfobarCoordinator -up-> TranslateInfoBarDelegate
+InfobarTranslateMediator -up-> TranslateInfoBarDelegate
+TranslateInfobarCoordinator *-- InfobarBannerViewController
+TranslateInfobarCoordinator *-- InfobarTranslateTableViewController
+ChromeTableViewController <|-- InfobarTranslateTableViewController
+InfobarTranslateModalConsumer <|-- InfobarTranslateTableViewController
+@enduml

@@ -1,0 +1,50 @@
+@startuml
+
+object DownloadManagerService
+object DownloadInfoBarController {
+  createInfoBarForState()
+}
+
+object DownloadProgressInfoBarData
+object "DownloadProgressInfoBar(java)" as DPIB_j {
+}
+object "DownloadProgressInfoBar(native)" as DPIB_n
+object DownloadProgressInfoBarDelegate
+object InfoBarAndroid
+object InfoBar
+object InfoBarDelegate
+
+DownloadManagerService *-- DownloadInfoBarController
+object InfoBarContainer
+object InfoBarContainerAndroid {
+  PlatformSpecificAddInfoBar()
+}
+
+object Tab
+object TabImpl
+object TabAndroid
+object WebContents
+object InfoBarService
+
+Tab <|-- TabImpl
+TabImpl ..> TabAndroid
+TabAndroid ..> WebContents
+WebContents ..> InfoBarService
+InfoBar <|-- InfoBarAndroid
+InfoBarAndroid <|-- DPIB_n
+InfoBarService "*" *-- InfoBar
+InfoBarDelegate <|-- DownloadProgressInfoBarDelegate
+InfoBar *-- InfoBarDelegate
+
+DownloadInfoBarController ..> DPIB_j : "1: createInfoBar(client, tab, info)"
+DPIB_j ..> DPIB_n : "2: DownloadProgressInfoBar::ctor"
+DPIB_n ..> InfoBarService : "3: AddInfoBar"
+InfoBarService ..> InfoBarContainer : "4: AddInfoBar"
+InfoBarContainer ..> InfoBarContainerAndroid : "5: PlatformSpecificAddInfobar"
+InfoBarContainerAndroid ..> InfoBarAndroid : "6: CreateRenderInfoBar"
+DPIB_n ..> DPIB_j : "7: ctor(client, data)"
+InfoBarContainerAndroid ..> InfoBarAndroid : "8: SetJavaInfoBar"
+InfoBarContainerAndroid ..> InfoBarContainer : "9: addInfoBar"
+
+
+@enduml

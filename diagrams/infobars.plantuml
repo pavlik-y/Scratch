@@ -1,0 +1,58 @@
+@startuml
+
+package "components/infobars/core" {
+  object InfoBar {
+    PlatformSpecific*()
+    delegate_
+    owner_
+  }
+
+  object InfoBarDelegate
+
+  object InfoBarManager {
+    infobars_
+  }
+
+  object "InfoBarManager::Observer" as IBM_Observer {
+    OnInfoBarAdded
+    OnInfoBarRemoved
+    OnInfoBarReplaced
+    OnManagerShuttingDown
+  }
+
+  object InfoBarContainer
+  object ConfirmInfoBarDelegate
+}
+
+package "chrome/browser/infobars" {
+  object InfoBarService
+}
+
+object InfoBarAndroid
+object WebContentsUserData
+object WebContents
+
+object InfoBarContainerAndroid
+
+object DuplicateDownloadInfoBarDelegate
+object ChromeDuplicateDownloadInfoBarDelegate
+
+InfoBarDelegate <|-- ConfirmInfoBarDelegate
+ConfirmInfoBarDelegate <|-- DuplicateDownloadInfoBarDelegate
+DuplicateDownloadInfoBarDelegate <|-- ChromeDuplicateDownloadInfoBarDelegate
+
+InfoBarManager <|-- InfoBarService
+InfoBarManager *-- "*" InfoBar
+InfoBarManager ..> "*" IBM_Observer
+InfoBar .up.> InfoBarContainer
+InfoBar *-- InfoBarDelegate
+InfoBar .up.> InfoBarManager
+IBM_Observer <|-- InfoBarContainer
+
+InfoBarContainer <|-- InfoBarContainerAndroid
+
+InfoBar <|-- InfoBarAndroid
+WebContentsUserData <|-- InfoBarService
+
+WebContents *-- WebContentsUserData
+@enduml

@@ -1,0 +1,36 @@
+@startuml
+object InfoBar #white
+object InfoBarAndroid #white
+
+InfoBar <|-- InfoBarAndroid
+
+object ConfirmInfoBar #white
+object DownloadProgressInfoBar
+
+InfoBarAndroid <|-- ConfirmInfoBar
+InfoBarAndroid <|-- DownloadProgressInfoBar
+
+object SmsInfoBar
+ConfirmInfoBar <|-- SmsInfoBar
+
+object InfoBarDelegate #white
+object ConfirmInfoBarDelegate #white
+
+InfoBarDelegate <|-- ConfirmInfoBarDelegate
+
+object SmsInfoBarDelegate
+object PopupBlockedInfoBarDelegate
+object SimpleConfirmInfoBarDelegate #white
+
+ConfirmInfoBarDelegate <|-- SmsInfoBarDelegate
+ConfirmInfoBarDelegate <|-- PopupBlockedInfoBarDelegate
+ConfirmInfoBarDelegate <|-- SimpleConfirmInfoBarDelegate
+object SimpleConfirmInfoBarBuilder #white
+object "SimpleConfirmInfoBarBuilder.Listener" as SCIBB_Listener #white
+object ModuleInstallUi
+
+ModuleInstallUi ..> SimpleConfirmInfoBarBuilder
+InfoBar *-- InfoBarDelegate
+SimpleConfirmInfoBarDelegate ..> SCIBB_Listener
+
+@enduml

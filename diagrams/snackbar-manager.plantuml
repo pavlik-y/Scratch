@@ -1,0 +1,53 @@
+@startuml
+object BottomContainer
+note right : Referenced from ChromeActivity.\nContainer for Snackbar
+
+object SnackbarView {
+  +announceforAccessibility()
+  +bringToFront()
+  +overrideParent()
+  +isShowing()
+  +dismiss()
+  +show()
+  +update()
+  +announceforAccessibility()
+}
+
+note  right : View. Not an Android View.\nOnly used in TopSnackbarView externally.
+
+object TemplatePreservingTextView
+note right: widgit
+
+object SnackbarCollection {
+  +clear()
+  +add()
+  +getCurrent()
+  +isEmpty()
+  +removeMatchingSnackbars(controller, actionData)
+  +removeCurrentDueToTimeout()
+  +removeCurrentDueToAction()
+  -mSnackbars
+  -mPersistentSnackbars
+}
+
+object SnackbarController {
+  +onAction()
+  +onDismissNoAction()
+}
+
+object SnackbarManager {
+  +showSnackbar()
+  +dismissSnackbars()
+  +isShowing()
+}
+
+object Snackbar
+note right : Snackbar properties
+
+SnackbarManager --> SnackbarCollection
+SnackbarManager --> SnackbarView
+SnackbarView --> TemplatePreservingTextView
+SnackbarCollection "*" --> Snackbar
+SnackbarView ..> Snackbar
+Snackbar .up.> SnackbarController
+@enduml

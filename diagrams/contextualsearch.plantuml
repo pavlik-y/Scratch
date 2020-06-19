@@ -1,0 +1,33 @@
+@startuml
+
+object ContextualSearchPlugin
+object ContextualSearchModule
+object ContextualSearchDispatchHandler
+
+' Leaf object.
+object ContextualSearchRequestState
+object JsonRenderer
+object CocaCards
+object CocaCard
+object SearchContext
+object RequestHandler
+
+' Leaf object. Returns urls for GWS search requests.
+object GwsContextualSearchRequest
+
+object RelatedSearches
+object RelatedSearchesImpl #LightBlue
+object RelatedSearchesQuery
+
+CocaCards *-- "*" CocaCard
+
+ContextualSearchDispatchHandler ..> RequestHandler
+
+RequestHandler --> SearchContext : Creates?
+RelatedSearches <|-- RelatedSearchesImpl
+RelatedSearchesQuery --> RelatedSearchesImpl : Creates
+JsonRenderer --> CocaCards : Creates
+ContextualSearchModule -> ContextualSearchRequestState : Provides
+CocaCard --> GwsContextualSearchRequest
+
+@enduml

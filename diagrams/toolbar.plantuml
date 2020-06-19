@@ -1,0 +1,86 @@
+@startuml
+object ToolbarLayout
+object ToolbarPhone
+object ToolbarManager
+
+object UrlBarDelegate {
+  getViewForUrlBackFocus()
+  allowKeyboardLearning()
+  backKeyPressed()
+  shouldForceLTR()
+  shouldCutCopyVerbatim()
+  gestureDetected()
+}
+
+object FakeboxDelegate {
+  setUrlBarFocus()
+  isUrlBarFocused()
+  isCurrentPage()
+  getLocationBarVoiceRecognitionHandler()
+  addUrlFocusChangeListener()
+  removeUrlFocusChangeListener()
+}
+
+object LocationBar
+object LocationBarLayout
+object LocationBarPhone
+object LocationBarTablet
+object SearchActivityLocationBarLayout
+
+object StatusViewCoordinator
+object StatusView
+object StatusMediator
+object StatusViewBinder
+
+object UrlBar
+object UrlBarCoordinator
+
+object AutocompleteCoordinator
+object AutocompleteDelegate {
+  onUrlTextChanged()
+  onSuggestionsChanged()
+  onSuggestionsHidden()
+  hideKeyboard()
+  loadUrl()
+  didFocusUrlFromFakebox()
+  isUrlBarFocused()
+}
+
+object "LocationBarVoiceRecognitionHandler.Delegate" as LBVRH_Deleate {
+  loadUrlFromVoice()
+  updateMicButtonState()
+  setSearchQuery()
+  getToolbarDataProvider()
+  getAutocompleteCoordinator()
+  getWindowAndroid()
+}
+
+object ToolbarDataProvider
+
+ToolbarLayout <|-- ToolbarPhone
+LocationBarLayout <|-- LocationBarPhone
+LocationBarLayout <|-- LocationBarTablet
+LocationBarLayout <|-- SearchActivityLocationBarLayout
+
+LocationBar <|-- LocationBarLayout
+AutocompleteDelegate <|-- LocationBarLayout
+FakeboxDelegate <|-- LocationBarLayout
+LBVRH_Deleate <|-- LocationBarLayout
+
+FakeboxDelegate <|-- LocationBar
+UrlBarDelegate <|-- LocationBar
+
+ToolbarPhone --> LocationBarPhone
+ToolbarLayout ..> LocationBar
+ToolbarManager ..> LocationBar
+
+LocationBarLayout --> StatusViewCoordinator
+LocationBarLayout --> UrlBar
+LocationBarLayout --> UrlBarCoordinator
+LocationBarLayout --> ToolbarDataProvider
+LocationBarLayout --> AutocompleteCoordinator
+
+UrlBarCoordinator --> UrlBar
+
+StatusViewCoordinator --> StatusMediator
+@enduml

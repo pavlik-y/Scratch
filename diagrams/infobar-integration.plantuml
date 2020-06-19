@@ -1,0 +1,28 @@
+@startuml
+
+object InfoBarContainer
+object "InfoBarContainerView(desktop)" as IBCV_desktop
+object InfoBarContainerAndroid {
+  SetWebContents()
+}
+object InfoBarContainerIOS
+object "InfoBarContainer(android)" as InfoBarContainer_android {
+  updateWebContents()
+  initializeContainerView()
+}
+object InfoBarContainerView
+object SwipableOverlayView
+object FrameLayout
+object Tab
+
+
+InfoBarContainer <|-- IBCV_desktop
+InfoBarContainer <|-- InfoBarContainerAndroid
+InfoBarContainer <|-- InfoBarContainerIOS
+InfoBarContainer_android *-- InfoBarContainerAndroid
+InfoBarContainerAndroid .up.> InfoBarContainer_android
+Tab "UserData" *-- InfoBarContainer_android
+InfoBarContainer_android *-- InfoBarContainerView
+FrameLayout <|-- SwipableOverlayView
+SwipableOverlayView <|-- InfoBarContainerView
+@enduml

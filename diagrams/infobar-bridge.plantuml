@@ -1,0 +1,19 @@
+@startuml
+object NativeEnd {
+  createJavaEnd()
+}
+object JavaEnd
+
+object "InfoBar(native)" as InfoBar_N
+object InfoBarDelegate
+
+object GenericInfobar
+object GenericInfobarDelegate
+
+object SavePasswordNativeEnd
+
+InfoBar_N <|-- GenericInfobar
+InfoBarDelegate <|-- GenericInfobarDelegate
+NativeEnd ..> JavaEnd : creates
+NativeEnd <|-- SavePasswordNativeEnd
+@enduml

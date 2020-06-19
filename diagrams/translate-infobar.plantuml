@@ -1,0 +1,45 @@
+@startuml
+
+object TranslateClient
+object ChromeTranslateClient
+object WebContents {
+  GetJavaWebContents()
+}
+object TranslateCompactInfoBar
+object TranslateManager
+object WebContentsAndroid
+object "WebContents(java)" as WC_java
+object "WebContentsImpl(java)" as WCI_java
+object WebContentsImpl
+object SnackbarManageable
+object ChromeActivity
+object SnackbarManager
+object TabAndroid {
+  FromWebContents
+}
+object TabImpl {
+  getActivity()
+}
+
+SnackbarManageable --> SnackbarManager
+SnackbarManageable <|-- ChromeActivity
+
+WebContents *.. ChromeTranslateClient
+TranslateClient <|-- ChromeTranslateClient
+
+ChromeTranslateClient *-- TranslateManager
+TranslateManager .up.> TranslateClient
+
+ChromeTranslateClient .up.> WebContents
+
+WebContents <|-- WebContentsImpl
+
+WebContentsImpl *-- WebContentsAndroid
+WC_java <|-- WCI_java
+WebContentsAndroid *-- WCI_java
+WebContents *.. TabAndroid
+TabAndroid .> TabImpl
+TabImpl .> TabAndroid
+TabImpl .> ChromeActivity
+
+@enduml

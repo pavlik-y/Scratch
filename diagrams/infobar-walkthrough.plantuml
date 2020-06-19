@@ -1,0 +1,161 @@
+@startuml
+' Colors:
+' - Default color for interfaces
+' - blue color for specific classes
+' - green for external objects
+' Relationships:
+' <|-- Inheritance
+' *--> Ownership
+' --> Reference
+' ..> Call
+
+object ChromePasswordManagerClient #LightGreen
+object ConfirmInfoBarDelegate
+object "ConfirmInfoBar(j)" as ConfirmInfoBar_j
+object "ConfirmInfoBar(n)" as ConfirmInfoBar_n
+object InfoBarUiItem
+object "InfoBar(j)" as InfoBar_j
+object "InfoBar(j).Container" as InfoBar_j_Container
+object "InfoBar(n)" as InfoBar_n
+object InfoBarAndroid {
+  CreateRenderInfoBar
+}
+object "InfoBarContainer(j)" as InfoBarContainer_j  #LightBlue
+object "InfoBarContainer(n)" as InfoBarContainer_n
+object InfoBarContainerAndroid #LightBlue
+
+' Here all the stacking happens
+object "InfoBarContainerLayout\n: OptimizedFrameLayout" as InfoBarContainerLayout #LightBlue {
+  processPendingAnimations()
+}
+object InfoBarContainerView #LightBlue
+object InfoBarDelegate
+object InfoBarManager
+object "InfoBarManager::Observer" as IBM_Observer
+object InfoBarService #LightBlue
+object "SavePasswordInfoBar(j)" as SavePasswordInfoBar_j #LightBlue
+object "SavePasswordInfoBar(n)" as SavePasswordInfoBar_n #LightBlue
+object SavePasswordInfoBarDelegate #LightBlue {
+  Accept()
+}
+object "SwipableOverlayView\n: FrameLayout" as SwipableOverlayView {
+  WebContents GestureStateListener
+}
+object "TabImpl(n)" as TabImpl_n #LightGreen
+object "TabImpl(j)" as TabImpl_j #LightGreen
+object "Tab(j)" as Tab_j
+object UserData
+object "User Tap" as UserTap #LightGreen
+object "WebContents(j)" as WebContents_j
+object "WebContents(n)" as WebContents_n
+object WebContentsUserData
+
+InfoBarManager <|-- InfoBarService
+WebContentsUserData <|-- InfoBarService
+UserData <|-- InfoBarContainer_j
+InfoBarContainer_n <|-- InfoBarContainerAndroid
+IBM_Observer <|-- InfoBarContainer_n
+Tab_j <|-- TabImpl_j
+SwipableOverlayView <|-- InfoBarContainerView
+InfoBarDelegate <|-- ConfirmInfoBarDelegate
+ConfirmInfoBarDelegate <|-- SavePasswordInfoBarDelegate
+
+InfoBar_n <|-- InfoBarAndroid
+InfoBarAndroid <|-- ConfirmInfoBar_n
+ConfirmInfoBar_n <|-- SavePasswordInfoBar_n
+
+InfoBar_j <|-- ConfirmInfoBar_j
+ConfirmInfoBar_j <|-- SavePasswordInfoBar_j
+InfoBar_j_Container <|-- InfoBarContainer_j
+
+Tab_j -> WebContents_j
+WebContents_j -> WebContents_n
+WebContents_n -> WebContents_j
+
+ChromePasswordManagerClient -up-> WebContents_n
+
+' 1. Create InfoBarService
+' Called from TabImpl(native)
+' TabHelpers::AttachTabHelpers calls InfoBarService::CreateForWebContents
+TabImpl_n ..> InfoBarService : 1. Creates
+WebContents_n *--> WebContentsUserData
+
+' 2. Create InfoBarContainer in java
+' TabImpl(java).initWebContents calls through TabHelpers InfoBarContainer.from(tab)
+TabImpl_j ..> InfoBarContainer_j : 2. Creates
+Tab_j *--> UserData
+
+' InfoBarContainer(j) ctor:
+' - Start observing tab events
+' - initializeContainerView {PAV}: Is it related to UI parts?
+' - create native InfoBarContainer
+
+' InfoBarContainer(j) creates native InfoBarContainer
+InfoBarContainer_j ..> InfoBarContainerAndroid : 2. Creates
+InfoBarContainer_j *--> InfoBarContainerAndroid
+InfoBarContainerAndroid -up-> InfoBarContainer_j
+
+' 2.1 InitializeContainerView
+' - Creates InfoBarContainerView
+' - Attaches it to bottom_container
+' - Setup notifications with IPH
+' - Setup notifications from Keyboard
+InfoBarContainer_j ..> InfoBarContainerView : 2.1 Creates\nattaches to\nbottom_container
+InfoBarContainer_j *--> InfoBarContainerView
+InfoBarContainerView ..> InfoBarContainerLayout: 2.1 Creates
+InfoBarContainerView *--> InfoBarContainerLayout
+
+
+' 3. Connect InfoBarContainer and InfoBarService
+' Triggered by tab events InfoBarContainer(j) calls updateWebContents()
+TabImpl_j ..> InfoBarContainer_j : 3. updateWebContents
+InfoBarContainer_j ..> InfoBarContainerAndroid : 3. SetWebContents
+InfoBarContainerAndroid .up.> WebContents_n : 3. Gets InfoBarService
+InfoBarContainerAndroid ..> InfoBarContainer_n : 3. ChangeInfoBarManager
+InfoBarContainer_n --> InfoBarManager
+InfoBarManager -up-> IBM_Observer
+
+' 4. Create InfoBar
+' ChromePasswordManagerClient calls
+ChromePasswordManagerClient ..> SavePasswordInfoBarDelegate : 4. Creates
+ChromePasswordManagerClient ..> SavePasswordInfoBar_n : 4. Creates
+InfoBar_n *--> InfoBarDelegate
+
+SavePasswordInfoBarDelegate .up.> WebContents_n : 4. Gets InfoBarManager
+SavePasswordInfoBarDelegate .up.> InfoBarManager : 4. AddInfoBar
+InfoBarManager *--> InfoBar_n
+
+InfoBarManager .up.> IBM_Observer : 4. OnInfoBarAdded
+InfoBarContainer_n .up.> InfoBarContainerAndroid: 4.1 PlatformSpecificAddInfoBar
+InfoBarContainerAndroid ..> InfoBarAndroid: 4.1 CreateRenderInfoBar
+SavePasswordInfoBar_n .> SavePasswordInfoBar_j: 4.1 Creates
+InfoBarContainerAndroid ..> InfoBarAndroid: 4.1 SetJavaInfoBar
+InfoBarAndroid -> InfoBar_j
+
+InfoBarContainerAndroid ..> InfoBarContainer_j: 4.1 addInfoBar
+InfoBarContainer_j --> InfoBar_j
+InfoBar_j -up-> InfoBar_j_Container
+InfoBarContainer_j ..> InfoBarContainerView: 4.2 addInfoBar
+InfoBarContainerView ..> InfoBar_j: 4.2 createView
+InfoBarContainerView ..> InfoBarContainerLayout: 4.2 addInfoBar
+
+InfoBarContainer_n ..> InfoBar_n: 4.3 Show
+
+' 5. Switch tabs
+InfoBarContainer_n ..> InfoBar_n: 5. Hide
+InfoBar_n .up.> InfoBarContainer_n: 5. RemoveInfoBar
+InfoBarContainer_n ..> InfoBarContainerAndroid: 5. PlatformSpecificRemoveInfoBar
+InfoBarContainerAndroid ..> InfoBarAndroid: 5. CloseJavaInfoBar
+InfoBarAndroid ..> InfoBar_j: 5. closeInfoBar
+InfoBar_j .up.> InfoBar_j_Container: 5. removeInfoBar
+InfoBarContainer_j ..> InfoBarContainerView: 5. removeInfoBar
+InfoBarContainerView ..> InfoBarContainerLayout: 5. removeInfoBar
+
+' 6. User tapped "Save" button
+UserTap ..> ConfirmInfoBar_j: 6. onButtonClicked
+ConfirmInfoBar_j .up.> InfoBar_j: 6. onButtonClicked
+InfoBar_j .up.> InfoBarAndroid: 6. OnButtonClicked
+InfoBarAndroid ..> ConfirmInfoBar_n: 6. ProcessButton
+ConfirmInfoBar_n .> ConfirmInfoBarDelegate: 6. Accept
+
+@enduml

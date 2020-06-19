@@ -1,0 +1,84 @@
+InfoBar <|-- InfoBarAndroid
+
+InfoBarAndroid <|-- ConfirmInfoBar
+InfoBarAndroid <|-- DownloadProgressInfoBar
+InfoBarAndroid <|-- FramebustBlockInfoBar
+InfoBarAndroid <|-- GeneratedPasswordSavedInfoBar
+InfoBarAndroid <|-- InstallableAmbientBadgeInfoBar
+InfoBarAndroid <|-- NearOomInfoBar
+InfoBarAndroid <|-- NearOomReductionInfoBar
+InfoBarAndroid <|-- ReaderModeInfoBar
+InfoBarAndroid <|-- SearchGeolocationDisclosureInfoBar
+InfoBarAndroid <|-- SendTabToSelfInfoBar
+InfoBarAndroid <|-- SurveyInfoBar
+InfoBarAndroid <|-- TranslateCompactInfoBar
+
+ConfirmInfoBar <|-- AdsBlockedInfoBar
+ConfirmInfoBar <|-- AutofillCreditCardFillingInfoBar
+ConfirmInfoBar <|-- AutofillSaveCardInfoBar
+ConfirmInfoBar <|-- DataReductionPromoInfoBar
+ConfirmInfoBar <|-- DuplicateDownloadInfoBar
+ConfirmInfoBar <|-- GroupedPermissionInfoBar
+ConfirmInfoBar <|-- InstantAppsInfoBar
+ConfirmInfoBar <|-- KnownInterceptionDisclosureInfoBar
+ConfirmInfoBar <|-- PreviewsLitePageInfoBar
+ConfirmInfoBar <|-- SafetyTipInfoBar
+ConfirmInfoBar <|-- SavePasswordInfoBar
+ConfirmInfoBar <|-- SmsInfoBar
+ConfirmInfoBar <|-- SyncErrorInfoBar
+ConfirmInfoBar <|-- UpdatePasswordInfoBar
+
+InfoBarDelegate <|-- ConfirmInfoBarDelegate
+
+ConfirmInfoBarDelegate <|-- AdsBlockedInfobarDelegate
+ConfirmInfoBarDelegate <|-- AutofillCreditCardFillingInfoBarDelegateMobile
+ConfirmInfoBarDelegate <|-- AutofillSaveCardInfoBarDelegateMobile
+ConfirmInfoBarDelegate <|-- DataReductionPromoInfoBarDelegateAndroid
+ConfirmInfoBarDelegate <|-- DuplicateDownloadInfoBarDelegate
+ConfirmInfoBarDelegate <|-- GroupedPermissionInfoBarDelegate
+ConfirmInfoBarDelegate <|-- InstantAppsInfoBarDelegate
+ConfirmInfoBarDelegate <|-- KnownInterceptionDisclosureInfoBarDelegate
+ConfirmInfoBarDelegate <|-- PreviewsLitePageInfoBarDelegate
+ConfirmInfoBarDelegate <|-- SafetyTipInfoBarDelegate
+ConfirmInfoBarDelegate <|-- SmsInfoBarDelegate
+ConfirmInfoBarDelegate <|-- SyncErrorInfoBarDelegateAndroid
+
+ConfirmInfoBarDelegate <|-- PasswordManagerInfoBarDelegate
+PasswordManagerInfoBarDelegate <|-- SavePasswordInfoBarDelegate
+PasswordManagerInfoBarDelegate <|-- UpdatePasswordInfoBarDelegate
+
+ConfirmInfoBarDelegate <|-- AutomationInfoBarDelegate
+ConfirmInfoBarDelegate <|-- CollectedCookiesInfoBarDelegate
+ConfirmInfoBarDelegate <|-- DangerousDownloadInfoBarDelegate
+ConfirmInfoBarDelegate <|-- DefaultBrowserInfoBarDelegate
+ConfirmInfoBarDelegate <|-- DevToolsInfoBarDelegate
+ConfirmInfoBarDelegate <|-- ExtensionDevToolsInfoBarDelegate
+ConfirmInfoBarDelegate <|-- FlashDeprecationInfoBarDelegate
+ConfirmInfoBarDelegate <|-- GlobalConfirmInfoBar_DelegateProxy
+ConfirmInfoBarDelegate <|-- GoogleApiKeysInfoBarDelegate
+ConfirmInfoBarDelegate <|-- HungPluginInfoBarDelegate
+ConfirmInfoBarDelegate <|-- HungRendererInfoBarDelegate
+ConfirmInfoBarDelegate <|-- IncognitoConnectabilityInfoBarDelegate
+ConfirmInfoBarDelegate <|-- InstallationErrorInfoBarDelegate
+ConfirmInfoBarDelegate <|-- KeystonePromotionInfoBarDelegate
+ConfirmInfoBarDelegate <|-- NaClInfoBarDelegate
+ConfirmInfoBarDelegate <|-- ObsoleteSystemInfoBarDelegate
+ConfirmInfoBarDelegate <|-- OutdatedPluginInfoBarDelegate
+ConfirmInfoBarDelegate <|-- PageInfoInfoBarDelegate
+ConfirmInfoBarDelegate <|-- PepperBrokerInfoBarDelegate
+ConfirmInfoBarDelegate <|-- PermissionUpdateInfoBarDelegate
+ConfirmInfoBarDelegate <|-- PopupBlockedInfoBarDelegate
+ConfirmInfoBarDelegate <|-- ReloadPluginInfoBarDelegate
+ConfirmInfoBarDelegate <|-- ScreenCaptureInfoBarDelegateAndroid
+ConfirmInfoBarDelegate <|-- SimpleAlertInfoBarDelegate
+ConfirmInfoBarDelegate <|-- TabSharingInfoBarDelegate
+ConfirmInfoBarDelegate <|-- TestConfirmInfoBarDelegate
+ConfirmInfoBarDelegate <|-- ThemeInstalledInfoBarDelegate
+
+ConfirmInfoBarDelegate <|-- SimpleConfirmInfoBarDelegate
+
+
+ChromeWindow ..> SimpleConfirmInfoBarBuilder
+ModuleInstallUi ..> SimpleConfirmInfoBarBuilder
+UpdateInfoBarController ..> SimpleConfirmInfoBarBuilder
+ArCoreInstallUtils ..> SimpleConfirmInfoBarBuilder
