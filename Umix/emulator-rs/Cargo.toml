@@ -1,0 +1,6 @@
+[package]
+name = "emulator-rs"
+version = "0.1.0"
+authors = ["Pavel Yatsuk <pavely@google.com>"]
+
+[dependencies]

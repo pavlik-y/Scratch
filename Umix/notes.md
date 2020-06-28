@@ -1,0 +1,5 @@
+Passwords:
+- howie: xyzzy
+howie:xyzzy:Howard Curry:/home/howie
+yang:U+262F:Y Yang:/home/yang
+hmonk:COMEFROM:Harmonious Monk:/home/hmonk.
