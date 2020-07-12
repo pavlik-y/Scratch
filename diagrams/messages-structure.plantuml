@@ -1,0 +1,57 @@
+@startuml
+' Colors:
+' - Default color for interfaces
+' - blue color for specific classes
+' - green for external objects
+' Relationships:
+' <|-- Inheritance
+' *--> Ownership
+' --> Reference
+' ..> Call
+
+
+object Tab #LightBlue
+
+object MessageStateHandler {
+  show()
+  hide(animate, callback)
+  dismiss()
+}
+
+object MessagesAPI {
+  enqueueMessage(handler, scope)
+  dismissMessage()
+  queryMessageState()
+  createSingleActionMessage(properties, delegate)
+  getTopContainer()
+}
+
+' object Events {
+'   onNavigation()
+' }
+
+
+object SingleActionMessage
+object SingleActionDelegate {
+  onActionClicked()
+  onDismissed()
+}
+object SavePasswordDelegate #LightGreen
+
+object MessagesQueueManager
+object TopContainer
+object MessageBannerCoordinator
+' object MessageBannerView
+
+Tab *- MessagesQueueManager
+MessagesQueueManager *-- "*" MessageStateHandler
+MessageStateHandler <|-- SingleActionMessage
+SingleActionMessage *-- MessageBannerCoordinator
+' Events <|-- SingleActionMessage
+
+SingleActionMessage -> SingleActionDelegate
+SingleActionMessage -up-> TopContainer
+SingleActionDelegate <|-- SavePasswordDelegate
+' MessageBannerCoordinator *-- MessageBannerView
+
+@enduml

@@ -1,0 +1,29 @@
+@startuml
+object MessagesAPI {
+  enqueueMessage()
+  dismissMessage()
+}
+
+object Tab
+object MessageQueueManager {
+}
+
+object MessageStateHandler {
+  show()
+  hide()
+  dismiss()
+}
+object PasswordManagerClient
+
+PasswordManagerClient .> MessageStateHandler : 1. Creates
+PasswordManagerClient .up.> MessagesAPI : 2. Enqueue
+MessagesAPI .up.> Tab : 3. Lookup MessageQueueManager
+MessagesAPI .> MessageQueueManager : 4. Enqueue
+MessageQueueManager ..> MessageStateHandler : 5. Show
+
+PasswordManagerClient .up.> MessagesAPI : 6. Dismiss
+MessageQueueManager ..> MessageStateHandler : 7. Hide
+MessageStateHandler .up.> MessageQueueManager : 8. hiddenCallback
+MessageQueueManager ..> MessageStateHandler : 9. Dismiss
+MessageStateHandler .left.> PasswordManagerClient : 10 dismissed
+@enduml
