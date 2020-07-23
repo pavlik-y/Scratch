@@ -3,6 +3,7 @@
 
 class Component {
  public:
+  virtual void Setup();
   virtual void Tick() = 0;
 };
 

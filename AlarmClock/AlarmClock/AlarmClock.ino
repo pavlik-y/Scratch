@@ -6,6 +6,7 @@
 #include "component.h"
 #include "component_manager.h"
 #include "display.h"
+#include "internet_clock_sync.h"
 #include "real_time_clock.h"
 #include "time_display.h"
 
@@ -17,7 +18,7 @@ Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 Display display;
 RealTimeClock rtc;
-
+InternetClockSync internet_clock_sync;
 constexpr size_t kMaxComponents = 16;
 ComponentManager<kMaxComponents> component_manager;
 
@@ -37,7 +38,7 @@ void setup() {
   strip.show();
   strip.show();
 
-  component_manager.RegisterComponent(nullptr);
+  component_manager.RegisterComponent(&internet_clock_sync);
 }
 
 unsigned int dim_level = 0xf;

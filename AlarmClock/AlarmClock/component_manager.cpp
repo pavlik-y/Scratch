@@ -19,6 +19,7 @@ void ComponentManagerBase::RegisterComponent(Component* component) {
   if (index == capacity_)
     halt(0x11, "Too many components");
   components_[index] = component;
+  component->Setup();
 }
 
 void ComponentManagerBase::UnregisterComponent(Component* component) {
