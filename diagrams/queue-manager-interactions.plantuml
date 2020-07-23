@@ -1,7 +1,7 @@
 @startuml
 object MessagesAPI {
-  enqueueMessage()
-  dismissMessage()
+  enqueue()
+  dismiss()
 }
 
 object Tab
@@ -14,8 +14,11 @@ object MessageStateHandler {
   dismiss()
 }
 object PasswordManagerClient
+object SingleActionMessage
 
-PasswordManagerClient .> MessageStateHandler : 1. Creates
+MessageStateHandler <|-- SingleActionMessage
+
+PasswordManagerClient ..> SingleActionMessage : 1. Creates
 PasswordManagerClient .up.> MessagesAPI : 2. Enqueue
 MessagesAPI .up.> Tab : 3. Lookup MessageQueueManager
 MessagesAPI .> MessageQueueManager : 4. Enqueue
@@ -25,5 +28,5 @@ PasswordManagerClient .up.> MessagesAPI : 6. Dismiss
 MessageQueueManager ..> MessageStateHandler : 7. Hide
 MessageStateHandler .up.> MessageQueueManager : 8. hiddenCallback
 MessageQueueManager ..> MessageStateHandler : 9. Dismiss
-MessageStateHandler .left.> PasswordManagerClient : 10 dismissed
+SingleActionMessage ..> PasswordManagerClient : 10 dismissed
 @enduml
