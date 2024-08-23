@@ -4,7 +4,7 @@ import time
 
 
 def main():
-  fname = '/home/pi/christmas-lights/christmas.py'
+  fname = '/home/pavely/lights/christmas.py'
   while True:
     print("start process")
     mtime = os.path.getmtime(fname)
